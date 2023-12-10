@@ -43,7 +43,7 @@ for (const trash of trashIcon) {
       if (result.isConfirmed) {
         try {
           const axiosInstance = await axios.create({
-            baseURL: "http://localhost:4000",
+            baseURL: "http://52.77.254.92:4000",
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },

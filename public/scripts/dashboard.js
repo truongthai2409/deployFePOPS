@@ -156,7 +156,7 @@ $(function () {
 
       console.log(data_from_to);
       callApi(
-        "http://localhost:4000/revenue/revenue",
+        "http://52.77.254.92:4000/revenue/revenue",
         "GET",
         "text/plain",
         data_from_to,
@@ -279,7 +279,7 @@ function upDateCanvas( data_days, data_revenues, data_total_orders, data_total_p
 // ============= list =====================
 const getDataList = async (id) => {
   const axiosInstance = axios.create({
-    baseURL: "http://localhost:4000",
+    baseURL: "http://52.77.254.92:4000",
   });
   const result = await axiosInstance.get(`/revenue/invoice/${id}`);
   return result.data;

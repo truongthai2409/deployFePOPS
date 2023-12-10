@@ -8,7 +8,7 @@ form.addEventListener("submit", async (e) => {
   try {
     
     const axiosInstance = axios.create({
-      baseURL: "http://localhost:4000",
+      baseURL: "http://52.77.254.92:4000",
       headers: {
         Authorization: `Bearer ${access_token}`,
       },

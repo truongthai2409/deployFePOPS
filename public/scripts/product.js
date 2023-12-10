@@ -38,7 +38,7 @@ function sendImage(file) {
       const formData = new FormData();
       formData.append("image", file);
       const axiosInstance = axios.create({
-        baseURL: "http://localhost:4000",
+        baseURL: "http://52.77.254.92:4000",
       });
       axiosInstance
         .post("/products/upload-product-image", formData)
@@ -92,7 +92,7 @@ addProduct.addEventListener("submit", (e) => {
   };
 
   const axiosInstance = axios.create({
-    baseURL: "http://localhost:4000",
+    baseURL: "http://52.77.254.92:4000",
   });
   axiosInstance
     .post("/products/add-product", data)

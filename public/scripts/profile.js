@@ -50,7 +50,7 @@ async function changeImages() {
           try {
             const accessToken = localStorage.getItem("accessToken");
             const axiosInstance = axios.create({
-              baseURL: "http://localhost:4000",
+              baseURL: "http://52.77.254.92:4000",
               headers: {
                 "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${accessToken}`,
@@ -60,7 +60,7 @@ async function changeImages() {
               .post("/users/upload-avatar", {
                 image: file,
               }).then( async (response) => {
-                await axios.post("http://localhost:3000/upload-avatar", {
+                await axios.post("http://3.0.99.113:3000/upload-avatar", {
                   avatar: response.data.avatar_url,
                 }).then((response) => {
                   Swal.fire({

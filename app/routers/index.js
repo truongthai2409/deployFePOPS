@@ -66,7 +66,7 @@ function route(app) {
     async (req, res, next) => {
       try {
         const axiosInstance = await axios.create({
-          baseURL: `http://${process.env.HOST}:${process.env.API}`,
+          baseURL: `http://${process.env.HOST_BE}:${process.env.API}`,
         });
         axiosInstance.get("/revenue/order-list").then(function (response) {
           const data = [...response.data];
@@ -95,7 +95,7 @@ function route(app) {
     async (req, res, next) => {
       try {
         const axiosInstance = await axios.create({
-          baseURL: `http://${process.env.HOST}:${process.env.API}`,
+          baseURL: `http://${process.env.HOST_BE}:${process.env.API}`,
           headers: {
             Authorization: accessToken,
           },
@@ -116,7 +116,7 @@ function route(app) {
     async (req, res, next) => {
       try {
         const apiResponse = await axios.get(
-          `http://${process.env.HOST}:${process.env.API}/products/product-list`,
+          `http://${process.env.HOST_BE}:${process.env.API}/products/product-list`,
           {
             headers: {
               Authorization: `${accessToken}`,
@@ -146,7 +146,7 @@ function route(app) {
       // console.log(role)
       try {
         const apiResponse = await axios.get(
-          `http://${process.env.HOST}:${process.env.API}/managers/staff-list`,
+          `http://${process.env.HOST_BE}:${process.env.API}/managers/staff-list`,
           {
             headers: {
               Authorization: accessToken,
@@ -186,7 +186,7 @@ function route(app) {
       try {
         // Thực hiện cuộc gọi API bằng Axios ở đây.
         const apiResponse = await axios.get(
-          `http://${process.env.HOST}:${process.env.API}/managers/staff-info/${staffsId}`,
+          `http://${process.env.HOST_BE}:${process.env.API}/managers/staff-info/${staffsId}`,
           {
             headers: {
               Authorization: `${accessToken}`,
@@ -211,7 +211,7 @@ function route(app) {
       try {
         // Thực hiện cuộc gọi API bằng Axios ở đây.
         const apiResponse = await axios.get(
-          `http://${process.env.HOST}:${process.env.API}/products/product-list`,
+          `http://${process.env.HOST_BE}:${process.env.API}/products/product-list`,
           {
             headers: {
               Authorization: `${accessToken}`,
@@ -243,7 +243,7 @@ function route(app) {
         // console.log(typeof(productId))
 
         const apiResponse = await axios.get(
-          `http://${process.env.HOST}:${process.env.API}/products/product-detail/${productId}`,
+          `http://${process.env.HOST_BE}:${process.env.API}/products/product-detail/${productId}`,
           {
             headers: {
               Authorization: `${accessToken}`,
@@ -269,7 +269,7 @@ function route(app) {
       try {
         // Thực hiện cuộc gọi API bằng Axios ở đây.
         const apiResponse = await axios.get(
-          `http://${process.env.HOST}:${process.env.API}/customers/customer-list`
+          `http://${process.env.HOST_BE}:${process.env.API}/customers/customer-list`
         );
         const data = [...apiResponse.data];
         const newObject = Object.assign(data, avatar);
@@ -299,7 +299,7 @@ function route(app) {
         // console.log(typeof(productId))
 
         const apiResponse = await axios.get(
-          `http://${process.env.HOST}:${process.env.API}/customers/detail/${customerId}`,
+          `http://${process.env.HOST_BE}:${process.env.API}/customers/detail/${customerId}`,
           {
             headers: {
               Authorization: `${accessToken}`,
@@ -332,7 +332,7 @@ function route(app) {
       try {
         const data = { verify_token: verifyEmail };
         const axiosInstance = axios.create({
-          baseURL: `http://${process.env.HOST}:${process.env.API}`,
+          baseURL: `http://${process.env.HOST_BE}:${process.env.API}`,
         });
         const response = await axiosInstance.post(
           "/staffs/check-verify-token",

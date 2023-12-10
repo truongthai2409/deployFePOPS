@@ -1,6 +1,6 @@
 const form = document.querySelector(".form");
-const URL = "http://localhost:4000";
-const API = "http://localhost:3000";
+const URL = "http://52.77.254.92:4000";
+const API = "http://3.0.99.113:3000";
 let accessToken = "";
 let refreshToken = "";
 
@@ -47,7 +47,6 @@ form.addEventListener("submit", async (e) => {
         },
       });
 
-      // Thực hiện yêu cầu POST đến server http://localhost:3000
       await axiosInstance.post("/dashboards", {
         // Dữ liệu cần gửi
         accessToken: accessToken,
@@ -90,7 +89,6 @@ if (querystring) {
     },
   });
 
-  // Thực hiện yêu cầu POST đến server http://localhost:3000
   const result = axiosInstance.post("/dashboards", {
     // Dữ liệu cần gửi
     accessToken: access_token,
@@ -152,7 +150,7 @@ const base_url = "https://accounts.google.com/o/oauth2/v2/auth";
 const query = {
   client_id:
     "851921911617-n07b8va3mj79k1i4du5eo9t8nkt1mgcp.apps.googleusercontent.com",
-  redirect_uri: "http://localhost:4000/users/oauth/google",
+  redirect_uri: "http://52.77.254.92:4000/users/oauth/google",
 
   response_type: "code",
   scope: [
