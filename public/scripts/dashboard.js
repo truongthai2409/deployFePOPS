@@ -17,7 +17,7 @@ let data_days = [];
 let data_revenues = [];
 const getDataRevenue = async () => {
   const axiosInstance = axios.create({
-    baseURL: "http://localhost:4000",
+    baseURL: "http://52.77.254.92:4000",
   });
   const result = await axiosInstance.get("/revenue/revenue");
   return result.data;

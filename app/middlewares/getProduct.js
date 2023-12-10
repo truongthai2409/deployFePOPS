@@ -11,9 +11,6 @@ module.exports = (app) => {
     // thêm accessToken vào header
     req.setHeader("Authorization", "Bearer " + accessToken);
 
-    // gọi API
-    // const response = await axios.get("http://localhost:4000/products/product-list");
-
     console.log("hi")
     // xử lý kết quả API
     // if (response.status === 200) {
