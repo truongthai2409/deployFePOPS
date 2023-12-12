@@ -1,5 +1,5 @@
 let myChart = document.getElementById("myChart");
-
+let myChart2D = myChart.getContext("2d");
 
 let daterange = document.getElementById("daterange");
 daterange.value = `${moment()
@@ -15,80 +15,14 @@ let data_from_to = {
 
 let data_days = [];
 let data_revenues = [];
-const getDataRevenue = async () => {
-  const axiosInstance = axios.create({
-    baseURL: "http://52.77.254.92:4000",
-  });
-  const result = await axiosInstance.get("/revenue/revenue");
-  return result.data;
-};
+let data_total_orders = [];
+let data_total_product = [];
 
-getDataRevenue().then((data) => {
-  data_days = data.days;
-  data_revenues = data.revenue_list;
-  data_total_orders = data.total_order_list;
-  data_total_product = data.product_quantity_list;
+let chart_data = {};
+let config = {};
 
-  let chart_data = {
-    labels: data_days,
-    datasets: [
-      {
-        label: "Revenues",
-        data: data_revenues,
-        borderColor: CHART_COLORS.red,
-        backgroundColor: ["rgba(255, 99, 132, 0.5)"],
-        stack: "combined",
-        type: "bar",
-        yAxisID: "y",
-      },
-      {
-        label: "Orders",
-        data: data_total_orders,
-        borderColor: CHART_COLORS.blue,
-        backgroundColor: ["rgba(54, 162, 235, 0.5)"],
-        stack: "combined",
-        yAxisID: "y1",
-      },
-    ],
-  };
-
-  const config = {
-    type: "line",
-    data: chart_data,
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: "Chart.js Stacked Line/Bar Chart",
-        },
-      },
-      scales: {
-        y: {
-          type: "linear",
-          display: true,
-          position: "left",
-        },
-        y1: {
-          type: "linear",
-          display: true,
-          position: "right",
-
-          // grid line settings
-          grid: {
-            drawOnChartArea: true, // only want the grid lines for one axis to show up
-          },
-        },
-      },
-      onClick: (e, indexList) => {
-        const index = indexList[0].index;
-        console.log(index);
-        console.log(data_days[index]);
-      },
-    },
-  };
-  let myChart2D = myChart.getContext("2d");
-  let new_chart = new Chart(myChart2D, config);
-});
+// let chart_data = {};
+// let config = {};
 
 const CHART_COLORS = {
   red: "rgb(255, 99, 132)",
@@ -99,6 +33,204 @@ const CHART_COLORS = {
   purple: "rgb(153, 102, 255)",
   grey: "rgb(201, 203, 207)",
 };
+
+const getDataRevenue = async () => {
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:4000",
+  });
+  const result = await axiosInstance.get("/revenue/revenue");
+  return result.data;
+};
+async function getData() {
+  await getDataRevenue().then((data) => {
+    // console.log(data)
+    data_days = data.days;
+    data_revenues = data.revenue_list;
+    data_total_orders = data.total_order_list;
+    data_total_product = data.product_quantity_list;
+
+    chart_data = {
+      labels: data_days,
+      datasets: [
+        {
+          label: "Revenues",
+          data: data_revenues,
+          borderColor: CHART_COLORS.red,
+          backgroundColor: ["rgba(255, 99, 132, 0.5)"],
+          stack: "combined",
+          type: "bar",
+          yAxisID: "y",
+        },
+        {
+          label: "Orders",
+          data: data_total_orders,
+          borderColor: CHART_COLORS.blue,
+          backgroundColor: ["rgba(54, 162, 235, 0.5)"],
+          stack: "combined",
+          yAxisID: "y1",
+        },
+      ],
+    };
+    config = {
+      type: "line",
+      data: chart_data,
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: "Chart.js Stacked Line/Bar Chart",
+          },
+        },
+        scales: {
+          y: {
+            type: "linear",
+            display: true,
+            position: "left",
+          },
+          y1: {
+            type: "linear",
+            display: true,
+            position: "right",
+
+            // grid line settings
+            grid: {
+              drawOnChartArea: true, // only want the grid lines for one axis to show up
+            },
+          },
+        },
+        onClick: (e, indexList) => {
+          const index = indexList[0].index;
+          // console.log(index);
+          // console.log(data_days[index]);
+        },
+      },
+    };
+    // const new_chart = new Chart(myChart2D, config);
+  });
+  // const result = await config;
+  // console.log(config)
+  return config;
+}
+
+async function firstAsyncFunction() {
+  // Thực hiện công việc bất đồng bộ
+  // console.log(getData())
+  return getData();
+}
+
+async function secondAsyncFunction() {
+  // Gọi hàm đầu tiên và chờ kết quả
+  const result = await firstAsyncFunction();
+  console.log(result);
+  return (new_chart = new Chart(myChart2D, result));
+  // Hàm này sẽ chỉ chạy khi firstAsyncFunction hoàn thành và trả về kết quả
+}
+
+// Gọi hàm thứ hai
+secondAsyncFunction()
+  .then((secondResult) => {
+    // Hàm này sẽ chỉ chạy khi secondAsyncFunction hoàn thành và trả về kết quả
+    // console.log(secondResult);
+  })
+  .catch((error) => {
+    // Xử lý lỗi nếu có
+    console.error(error);
+  });
+
+// firstAsyncFunction()
+//   .then((result) => {
+//     // Hàm này sẽ chạy khi firstAsyncFunction hoàn thành và trả về kết quả
+//     console.log(result);
+
+//     // Gọi hàm không phải là async ngay tại đây
+//     return nonAsyncFunction();
+//   })
+//   .then((nonAsyncResult) => {
+//     // Hàm này sẽ chạy khi nonAsyncFunction hoàn thành và trả về kết quả
+//     console.log(nonAsyncResult);
+//   })
+//   .catch((error) => {
+//     // Xử lý lỗi nếu có
+//     console.error(error);
+//   });
+
+// config = {
+//   type: "line",
+//   data: chart_data,
+//   options: {
+//     plugins: {
+//       title: {
+//         display: true,
+//         text: "Chart.js Stacked Line/Bar Chart",
+//       },
+//     },
+//     scales: {
+//       y: {
+//         type: "linear",
+//         display: true,
+//         position: "left",
+//       },
+//       y1: {
+//         type: "linear",
+//         display: true,
+//         position: "right",
+
+//         // grid line settings
+//         grid: {
+//           drawOnChartArea: true, // only want the grid lines for one axis to show up
+//         },
+//       },
+//     },
+//     onClick: (e, indexList) => {
+//       const index = indexList[0].index;
+//       // console.log(index);
+//       // console.log(data_days[index]);
+//     },
+//   },
+// };
+
+// const data1 = {
+//   labels: ["Nhãn 1", "Nhãn 2", "Nhãn 3", "Nhãn 1", "Nhãn 2", "Nhãn 3", "123"],
+//   datasets: [
+//     {
+//       label: "My First Dataset",
+//       data: [65, 59, 80, 81, 56, 55, 40],
+//       backgroundColor: [
+//         "rgba(255, 99, 132, 0.2)",
+//         "rgba(255, 159, 64, 0.2)",
+//         "rgba(255, 205, 86, 0.2)",
+//         "rgba(75, 192, 192, 0.2)",
+//         "rgba(54, 162, 235, 0.2)",
+//         "rgba(153, 102, 255, 0.2)",
+//         "rgba(201, 203, 207, 0.2)",
+//       ],
+//       borderColor: [
+//         "rgb(255, 99, 132)",
+//         "rgb(255, 159, 64)",
+//         "rgb(255, 205, 86)",
+//         "rgb(75, 192, 192)",
+//         "rgb(54, 162, 235)",
+//         "rgb(153, 102, 255)",
+//         "rgb(201, 203, 207)",
+//       ],
+//       borderWidth: 1,
+//     },
+//   ],
+// };
+
+// const config1 = {
+//   type: "bar",
+//   data: data1,
+//   options: {
+//     scales: {
+//       y: {
+//         beginAtZero: true,
+//       },
+//     },
+//   },
+// };
+
+// const new_chart = new Chart(myChart2D, config);
 
 //============== calender ==============
 
@@ -131,6 +263,7 @@ $(function () {
         to,
       };
       console.log(data_from_to);
+      ////=============
     }
   );
 
@@ -147,18 +280,18 @@ $(function () {
       opens: "rights",
     },
     function (start, end, label) {
-      from = start.format("DD/MM/YYYY");
-      to = end.format("DD/MM/YYYY");
+      from = start.format("YYYY-MM-DD");
+      to = end.format("YYYY-MM-DD");
       data_from_to = {
-        from,
-        to,
+        "from": from,
+        "to": to,
       };
 
       console.log(data_from_to);
       callApi(
-        "http://52.77.254.92:4000/revenue/revenue",
+        "http://localhost:4000/revenue/revenue",
         "GET",
-        "text/plain",
+        "application/json",
         data_from_to,
         handleSuccess,
         handleError
@@ -181,7 +314,8 @@ function callApi(
     data: data,
     success: function (response) {
       if (successCallback) {
-        successCallback(response);
+        console.log(response)
+        handleSuccess(response);
       }
     },
     error: function (error) {
@@ -194,92 +328,71 @@ function callApi(
 function handleSuccess(data) {
   console.log("Kết quả:", data);
   data_days = data.days;
+  // labels: data_days
+  // datasets : data_revenues
   data_revenues = data.revenue_list;
   data_total_orders = data.total_order_list;
   data_total_product = data.product_quantity_list;
-  upDateCanvas( data_days, data_revenues, data_total_orders, data_total_product );
+  // secondAsyncFunction()
+  //   .then((secondResult) => {
+  //     // Hàm này sẽ chỉ chạy khi secondAsyncFunction hoàn thành và trả về kết quả
+  //     console.log(secondResult);
+  //   })
+  //   .catch((error) => {
+  //     // Xử lý lỗi nếu có
+  //     console.error(error);
+  //   });
+  // upDateCanvas(data_days, data_revenues, data_total_orders, data_total_product);
+  // removeData(new_chart)
+
+  addData(new_chart, data_days, data_revenues);
+  console.log(new_chart.data);
+  // console.log(new_chart)
 }
 
 function handleError(error) {
   console.error("Lỗi:", error);
 }
-function upDateCanvas( data_days, data_revenues, data_total_orders, data_total_product ) {
-  let chart_data = {
-    labels: data_days,
-    datasets: [
-      {
-        label: "Revenues",
-        data: data_revenues,
-        borderColor: CHART_COLORS.red,
-        backgroundColor: ["rgba(255, 99, 132, 0.5)"],
-        stack: "combined",
-        type: "bar",
-        yAxisID: "y",
-      },
-      {
-        label: "Orders",
-        data: data_total_orders,
-        borderColor: CHART_COLORS.blue,
-        backgroundColor: ["rgba(54, 162, 235, 0.5)"],
-        stack: "combined",
-        yAxisID: "y1",
-      },
-    ],
-  };
+// function upDateCanvas( data_days, data_revenues ) {
+//   addData()
+// }
 
-  const config = {
-    type: "line",
-    data: chart_data,
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: "Chart.js Stacked Line/Bar Chart",
-        },
-      },
-      scales: {
-        y: {
-          type: "linear",
-          display: true,
-          position: "left",
-        },
-        y1: {
-          type: "linear",
-          display: true,
-          position: "right",
-
-          // grid line settings
-          grid: {
-            drawOnChartArea: true, // only want the grid lines for one axis to show up
-          },
-        },
-      },
-      onClick: (e, indexList) => {
-        const index = indexList[0].index;
-        console.log(index);
-        console.log(data_days[index]);
-      },
-    },
-  };
-  myChart.remove();
-  let myChart2D = myChart.getContext("2d");
-  // window.myChart2D.destroy();
-  // myChart2D.clearRect(0, 0, myChart.width, myChart.height);
-  // console.log(myChart2D.clearRect())
-  // console.log(myChart2D.fillRect());
-  let divChart = document.getElementById('divChart');
-  let canvas = document.createAttribute('canvas');
-  canvas.width = 400;
-  canvas.height = 150;
-  divChart.appendChild(canvas)
-  // let 
-
-  let new_chart = new Chart(myChart2D, config);
+function removeData(chart) {
+  chart.data.labels.pop();
+  // chart.data.datasets.forEach((dataset) => {
+  //   dataset.forEach((item)=>{
+  //     item.data.pop()
+  //   })
+  // });
+  // // chart.labels.forEach((label) => {
+  // //   label = '';
+  // // });
+  // console.log(chart.data)
+  chart.update();
 }
+
+function addData(chart, label, newData) {
+  chart.data.labels.map((item) =>
+    console.log(item)
+    // console.log(label)
+  );
+
+  // console.log(chart.data.datasets)
+
+  chart.data.datasets.forEach((dataset) => {
+    // dataset.data.push(newData);
+    console.log(dataset.data)
+    // dataset.forEach((item) => {
+    //   console.log(item.data);
+    // });
+  });
+  chart.update();
+}
+
 // ============= list =====================
 const getDataList = async (id) => {
   const axiosInstance = axios.create({
-    baseURL: "http://52.77.254.92:4000",
+    baseURL: "http://localhost:4000",
   });
   const result = await axiosInstance.get(`/revenue/invoice/${id}`);
   return result.data;
