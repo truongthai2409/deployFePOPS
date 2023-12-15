@@ -21,6 +21,7 @@ let data_total_product = [];
 let chart_data = {};
 let config = {};
 
+let my_chart;
 // let chart_data = {};
 // let config = {};
 
@@ -41,6 +42,7 @@ const getDataRevenue = async () => {
   const result = await axiosInstance.post("/revenue/revenue");
   return result.data;
 };
+
 async function getData() {
   await getDataRevenue().then((data) => {
     // console.log(data)
@@ -48,7 +50,6 @@ async function getData() {
     data_revenues = data.revenue_list;
     data_total_orders = data.total_order_list;
     data_total_product = data.product_quantity_list;
-
     chart_data = {
       labels: data_days,
       datasets: [
@@ -100,42 +101,38 @@ async function getData() {
         },
         onClick: (e, indexList) => {
           const index = indexList[0].index;
-          // console.log(index);
-          // console.log(data_days[index]);
         },
       },
     };
-    // const new_chart = new Chart(myChart2D, config);
+    my_chart = new Chart(myChart2D, config);
   });
-  // const result = await config;
-  // console.log(config)
   return config;
 }
+getData();
+// async function firstAsyncFunction() {
+//   // Thực hiện công việc bất đồng bộ
+//   // console.log(getData())
+//   return getData();
+// }
 
-async function firstAsyncFunction() {
-  // Thực hiện công việc bất đồng bộ
-  // console.log(getData())
-  return getData();
-}
-
-async function secondAsyncFunction() {
-  // Gọi hàm đầu tiên và chờ kết quả
-  const result = await firstAsyncFunction();
-  console.log(result);
-  return (new_chart = new Chart(myChart2D, result));
-  // Hàm này sẽ chỉ chạy khi firstAsyncFunction hoàn thành và trả về kết quả
-}
+// async function secondAsyncFunction() {
+//   // Gọi hàm đầu tiên và chờ kết quả
+//   const result = await firstAsyncFunction();
+//   // console.log(result);
+//   // return (new_chart = new Chart(myChart2D, result));
+//   // Hàm này sẽ chỉ chạy khi firstAsyncFunction hoàn thành và trả về kết quả
+// }
 
 // Gọi hàm thứ hai
-secondAsyncFunction()
-  .then((secondResult) => {
-    // Hàm này sẽ chỉ chạy khi secondAsyncFunction hoàn thành và trả về kết quả
-    // console.log(secondResult);
-  })
-  .catch((error) => {
-    // Xử lý lỗi nếu có
-    console.error(error);
-  });
+// secondAsyncFunction()
+//   .then((secondResult) => {
+//     // Hàm này sẽ chỉ chạy khi secondAsyncFunction hoàn thành và trả về kết quả
+//     // console.log(secondResult);
+//   })
+//   .catch((error) => {
+//     // Xử lý lỗi nếu có
+//     console.error(error);
+//   });
 
 // firstAsyncFunction()
 //   .then((result) => {
@@ -154,86 +151,46 @@ secondAsyncFunction()
 //     console.error(error);
 //   });
 
-// config = {
-//   type: "line",
-//   data: chart_data,
-//   options: {
-//     plugins: {
-//       title: {
-//         display: true,
-//         text: "Chart.js Stacked Line/Bar Chart",
-//       },
-//     },
-//     scales: {
-//       y: {
-//         type: "linear",
-//         display: true,
-//         position: "left",
-//       },
-//       y1: {
-//         type: "linear",
-//         display: true,
-//         position: "right",
-
-//         // grid line settings
-//         grid: {
-//           drawOnChartArea: true, // only want the grid lines for one axis to show up
-//         },
-//       },
-//     },
-//     onClick: (e, indexList) => {
-//       const index = indexList[0].index;
-//       // console.log(index);
-//       // console.log(data_days[index]);
-//     },
-//   },
-// };
-
-// const data1 = {
-//   labels: ["Nhãn 1", "Nhãn 2", "Nhãn 3", "Nhãn 1", "Nhãn 2", "Nhãn 3", "123"],
-//   datasets: [
-//     {
-//       label: "My First Dataset",
-//       data: [65, 59, 80, 81, 56, 55, 40],
-//       backgroundColor: [
-//         "rgba(255, 99, 132, 0.2)",
-//         "rgba(255, 159, 64, 0.2)",
-//         "rgba(255, 205, 86, 0.2)",
-//         "rgba(75, 192, 192, 0.2)",
-//         "rgba(54, 162, 235, 0.2)",
-//         "rgba(153, 102, 255, 0.2)",
-//         "rgba(201, 203, 207, 0.2)",
-//       ],
-//       borderColor: [
-//         "rgb(255, 99, 132)",
-//         "rgb(255, 159, 64)",
-//         "rgb(255, 205, 86)",
-//         "rgb(75, 192, 192)",
-//         "rgb(54, 162, 235)",
-//         "rgb(153, 102, 255)",
-//         "rgb(201, 203, 207)",
-//       ],
-//       borderWidth: 1,
-//     },
-//   ],
-// };
-
-// const config1 = {
-//   type: "bar",
-//   data: data1,
-//   options: {
-//     scales: {
-//       y: {
-//         beginAtZero: true,
-//       },
-//     },
-//   },
-// };
-
-// const new_chart = new Chart(myChart2D, config);
-
 //============== calender ==============
+function addData(chart, label, data_revenues, data_total_orders) {
+  console.log(label);
+  chart.data.labels = label;
 
+  // console.log(chart.data.datasets)
+
+  chart.data.datasets[0] = { ...chart.data.datasets[0], data: data_revenues };
+  chart.data.datasets[1] = {
+    ...chart.data.datasets[1],
+    data: data_total_orders,
+  };
+
+  chart.update();
+}
+
+$(function() {
+
+  var start = moment().subtract(29, 'days');
+  var end = moment();
+
+  function cb(start, end) {
+      $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+  }
+
+  $('#reportrange').daterangepicker({
+      startDate: start,
+      endDate: end,
+      ranges: {
+         'Today': [moment(), moment()],
+         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+         'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+         'This Month': [moment().startOf('month'), moment().endOf('month')],
+         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      }
+  }, cb);
+
+  cb(start, end);
+})
 $(document).ready(function () {
   $('input[name="daterange"]').daterangepicker();
 
@@ -264,6 +221,11 @@ $(function () {
       };
       console.log(data_from_to);
       ////=============
+      setTimeout(() => {
+        getDataList1(data_from_to).then((data12) => {
+          console.log(data12);
+        });
+      }, 5000);
     }
   );
 
@@ -283,72 +245,132 @@ $(function () {
       from = start.format("YYYY-MM-DD");
       to = end.format("YYYY-MM-DD");
       data_from_to = {
-        "from": from,
-        "to": to,
+        from: from,
+        to: to,
       };
 
       console.log(data_from_to);
-      callApi(
-        "http://localhost:4000/revenue/revenue",
-        "GET",
-        "application/json",
-        data_from_to,
-        handleSuccess,
-        handleError
-      );
+      // callApi(
+      //   "http://localhost:4000/revenue/revenue",
+      //   "GET",
+      //   data_from_to,
+      //   handleSuccess,
+      //   handleError
+      // );
+      // getDataCalendar(data_from_to)
+      // getDataList1(data_from_to).then((data12) => {
+      //   console.log(data12);
+      // });
+
+      getDataList1(data_from_to).then((result) => {
+        console.log(result.data);
+        my_chart.data.labels = result.data.days.reverse();
+        console.log(my_chart.data.labels);
+        // console.log(chart.data.datasets)
+
+        my_chart.data.datasets[0] = {
+          ...my_chart.data.datasets[0],
+          data: result.data.revenue_list,
+        };
+        my_chart.data.datasets[1] = {
+          ...my_chart.data.datasets[1],
+          data: result.data.total_order_list,
+        };
+
+        my_chart.update();
+        // handleSuccess(data);
+        // data_days = data.days;
+        // data_revenues = data.revenue_list;
+        // data_total_orders = data.total_order_list;
+        // createChart(data_days, data_revenues, data_total_orders)
+        // chart.update()
+        // addData(my_chart, data.days, data.revenue_list, data.total_order_list);
+      });
     }
   );
 });
-function callApi(
-  url,
-  method,
-  contentType,
-  data,
-  successCallback,
-  errorCallback
-) {
-  $.ajax({
-    url: url,
-    type: method,
-    contentType: contentType,
-    data: data,
-    success: function (response) {
-      if (successCallback) {
-        console.log(response)
-        handleSuccess(response);
-      }
-    },
-    error: function (error) {
-      if (errorCallback) {
-        errorCallback(error);
-      }
-    },
+// function callApi(
+//   url,
+//   method,
+//   data,
+//   successCallback,
+//   errorCallback
+// ) {
+//   $.ajax({
+//     url: url,
+//     type: method,
+//     contentType: 'application/json',
+// data: {
+//   "from": "2023-12-2",
+//   "to": "2023-12-10"
+// },
+//     success: function (response) {
+//       if (successCallback) {
+//         console.log(response)
+//         // handleSuccess(response);
+//       }
+//     },
+//     error: function (error) {
+//       if (errorCallback) {
+//         errorCallback(error);
+//       }
+//     },
+//   });
+// }
+const getDataList1 = async (data_from_to) => {
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:4000",
   });
-}
-function handleSuccess(data) {
-  console.log("Kết quả:", data);
-  data_days = data.days;
-  // labels: data_days
-  // datasets : data_revenues
-  data_revenues = data.revenue_list;
-  data_total_orders = data.total_order_list;
-  data_total_product = data.product_quantity_list;
-  // secondAsyncFunction()
-  //   .then((secondResult) => {
-  //     // Hàm này sẽ chỉ chạy khi secondAsyncFunction hoàn thành và trả về kết quả
-  //     console.log(secondResult);
-  //   })
-  //   .catch((error) => {
-  //     // Xử lý lỗi nếu có
-  //     console.error(error);
-  //   });
-  // upDateCanvas(data_days, data_revenues, data_total_orders, data_total_product);
-  // removeData(new_chart)
 
-  addData(new_chart, data_days, data_revenues);
-  console.log(new_chart.data);
-  // console.log(new_chart)
+  const result = await axiosInstance.post("/revenue/revenue", data_from_to);
+  return result;
+};
+
+async function getDataCalendar(data) {
+  console.log(data);
+  try {
+    const axiosInstance = await axios.create({
+      baseURL: "http://localhost:4000",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    axiosInstance
+      .get("/revenue/revenue", {
+        from: "2023-12-1",
+        to: "2023-12-6",
+      })
+      .then(function (response) {
+        console.log(response);
+      });
+  } catch (error) {
+    console.log(error);
+  }
 }
+// function handleSuccess(data) {
+//   console.log("Kết quả:", data);
+//   data_days = data.days;
+//   // labels: data_days
+//   // datasets : data_revenues
+//   data_revenues = data.revenue_list;
+//   data_total_orders = data.total_order_list;
+//   data_total_product = data.product_quantity_list;
+//   // secondAsyncFunction()
+//   //   .then((secondResult) => {
+//   //     // Hàm này sẽ chỉ chạy khi secondAsyncFunction hoàn thành và trả về kết quả
+//   //     console.log(secondResult);
+//   //   })
+//   //   .catch((error) => {
+//   //     // Xử lý lỗi nếu có
+//   //     console.error(error);
+//   //   });
+//   // upDateCanvas(data_days, data_revenues, data_total_orders, data_total_product);
+//   // removeData(new_chart)
+
+//   addData(new_chart, data_days, data_revenues);
+//   console.log(new_chart.data);
+
+// }
 
 function handleError(error) {
   console.error("Lỗi:", error);
@@ -368,24 +390,6 @@ function removeData(chart) {
   // //   label = '';
   // // });
   // console.log(chart.data)
-  chart.update();
-}
-
-function addData(chart, label, newData) {
-  chart.data.labels.map((item) =>
-    console.log(item)
-    // console.log(label)
-  );
-
-  // console.log(chart.data.datasets)
-
-  chart.data.datasets.forEach((dataset) => {
-    // dataset.data.push(newData);
-    console.log(dataset.data)
-    // dataset.forEach((item) => {
-    //   console.log(item.data);
-    // });
-  });
   chart.update();
 }
 

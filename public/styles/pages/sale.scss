@@ -328,3 +328,36 @@
     cursor: pointer;
   }
 }
+
+//======== add customer ======
+.div-customer {
+  display: none;
+  .customer-form {
+    display: flex;
+    justify-content: center;
+  }
+  .customer {
+    width: 30%;
+    background-color: $background-login;
+    border-radius: 8px;
+    margin-top: 10rem;
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    transform: translate(-50%);
+  }
+  i#turnOffAddCustomer {
+    position: relative;
+    top: 1rem;
+    left: 38rem;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  form {
+    width: 90%;
+    // padding-right: 10px;
+    // padding-bottom: 30px;
+    padding: 20px 20px 20px 10px;
+  }
+}

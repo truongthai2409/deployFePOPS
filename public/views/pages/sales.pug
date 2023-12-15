@@ -10,14 +10,15 @@ block vars
 block container 
   .container1 
     include ../blocks/bill_detail
+    include ../blocks/add_customer
     .sale 
       .show-product 
         .cart-FindCustomer.sticky 
           .icon-FindCustomer
             i.fa-solid.fa-laptop-code.icon-user 
           .form-FindCustomer 
-            input.form-FindCustomer(type='text' id='form-FindProduct' name='product' placeholder='Search Product' autocomplete="on" onkeydown='searchProduct(event)')
-          .button-FindCustomer 
+            input.form-FindCustomer(type='text' id='form-SearchProduct' name='product' placeholder='Search Product' autocomplete="on" onkeydown='searchProduct(event)')
+          .button-FindCustomer
             i.fa-solid.fa-magnifying-glass.icon-find
         ul.list-card 
           each data in Data ? Data : []
@@ -37,7 +38,7 @@ block container
             i.fa-solid.fa-user-tie.icon-user 
           .form-FindCustomer 
             input.form-FindCustomer(type='text' id='form-FindCustomer' name='customer' placeholder='Search Customer 0767..' autocomplete="on" onkeydown='searchCustomer(event)' )
-          .button-FindCustomer#addCustomer
+          .button-FindCustomer#add-customer 
             i.fa-solid.fa-user-pen.icon-find
         .list-FindCustomer
           ul.list-FindCustomer-select
@@ -61,4 +62,4 @@ block container
 block append scripts 
   script(src="../../scripts/sale.js") 
   script(src="../../scripts/bill_detail.js") 
-  
+  script(src="../../scripts/customer.js") 

@@ -1936,6 +1936,36 @@ html {
   cursor: pointer;
 }
 
+.div-customer {
+  display: none;
+}
+.div-customer .customer-form {
+  display: flex;
+  justify-content: center;
+}
+.div-customer .customer {
+  width: 30%;
+  background-color: rgb(249, 249, 249);
+  border-radius: 8px;
+  margin-top: 10rem;
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  transform: translate(-50%);
+}
+.div-customer i#turnOffAddCustomer {
+  position: relative;
+  top: 1rem;
+  left: 38rem;
+}
+.div-customer i#turnOffAddCustomer:hover {
+  cursor: pointer;
+}
+.div-customer form {
+  width: 90%;
+  padding: 20px 20px 20px 10px;
+}
+
 .error {
   background: #28254C;
 }
