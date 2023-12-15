@@ -95,7 +95,7 @@ addProduct.addEventListener("submit", (e) => {
     baseURL: "http://localhost:4000",
   });
   axiosInstance
-    .post("/products/add-product", data)
+    .patch("/products/add-product", data)
     .then((response) => {
       console.log(response);
       Swal.fire({
