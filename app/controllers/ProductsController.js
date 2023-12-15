@@ -21,12 +21,14 @@ class ProductController {
   }
 
   detail(req, res) {
-    let reqData = req.data;
-    console.log(reqData)
-    if (reqData.role == 1) {
-      res.render("../public/views/pages/detail_product", { reqData: reqData });
+    let data = req.data;
+    data.brand = checkBrand(data.brand);
+    data.category = checkCategory(data.category);
+    console.log(data)
+    if (data.role == 1) {
+      res.render("../public/views/pages/detail_product", { reqData: data });
     } else {
-      res.render("../public/views/pages/detail_product_staff", { reqData: reqData });
+      res.render("../public/views/pages/detail_product_staff", { reqData: data });
     }
     // res.render("../public/views/pages/detail_product", { reqData: reqData });
   }
@@ -40,10 +42,10 @@ const checkBrand = (brandIndex) => {
     "XiaoMi",
     "Honor",
     "Realme",
+    "Vivo",
     "Asus",
     "Nokia",
     "",
-    "Vivo",
   ];
   const n = brandArray.length;
   for (let i = 0; i < n; i++) {

@@ -38,7 +38,7 @@ const getDataRevenue = async () => {
   const axiosInstance = axios.create({
     baseURL: "http://localhost:4000",
   });
-  const result = await axiosInstance.get("/revenue/revenue");
+  const result = await axiosInstance.post("/revenue/revenue");
   return result.data;
 };
 async function getData() {

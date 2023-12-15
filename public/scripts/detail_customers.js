@@ -14,7 +14,7 @@ const accessToken = localStorage.getItem("accessToken");
 
 const getDataStaffInfo = async () => {
   const axiosInstance = axios.create({
-    baseURL: "http://52.77.254.92:4000",
+    baseURL: "http://localhost:4000",
     headers: {
         Authorization: `Bearer ${accessToken}`,
       },

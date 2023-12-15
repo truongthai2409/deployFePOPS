@@ -36,7 +36,7 @@ block container
                       if `${data.image_urls}` == null
                           img(src="./images/bg01.jpg" alt="" srcset="")
                       else 
-                          img(src=`${data.image_urls}`, alt="avatar").img
+                          img(src=`${data.image_urls[0]}`, alt="avatar").img
                   td
                       a(href=`/products/products-detail/?idProduct=${data._id}`)= data.product_name
                   td= data.brand

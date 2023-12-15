@@ -11,7 +11,7 @@ router.get(
     const { user_id } = req.params;
     console.log(user_id);
     const axiosInstance = axios.create({
-      baseURL: "http://52.77.254.92:4000",
+      baseURL: "http://localhost:4000",
       headers: {
         Authorization: `${accessToken}`,
       },

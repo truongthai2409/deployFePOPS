@@ -1608,6 +1608,14 @@ html {
 .product-left table td {
   padding: 10px 40px;
 }
+.product-left .btn-update {
+  width: 15rem;
+  height: 35px;
+  border-radius: 8px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
 
 .sale {
   display: flex;

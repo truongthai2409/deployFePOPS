@@ -36,9 +36,6 @@ block container
               th Brand
               td= Data.brand
             tr 
-              th Import_price
-              td= Data.import_price
-            tr 
               th Retail_price
               td= Data.retail_price
             tr 
@@ -47,16 +44,6 @@ block container
             tr 
               th Barcode
               td= Data.barcode
-            //- tr 
-            //-   th Barcode
-            //-   td
-            //-     svg(
-            //-       class="barcode"
-            //-       jsbarcode-format="upc"
-            //-       jsbarcode-value="123456789012"
-            //-       jsbarcode-textmargin="0"
-            //-       jsbarcode-fontoptions="bold"
-            //-     )
             tr 
               th Quantity
               td= Data.quantity
@@ -65,7 +52,7 @@ block container
               td= Data.status
             tr 
               th Created At
-              td= Data.created_at
+              td= Data.created_at.split('T')[0]
         
 
 block append scripts 

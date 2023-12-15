@@ -64,20 +64,21 @@ block container
               th Status
               td= Data.status
             tr 
+              th Id
+              td#idProduct= Data._id
+            tr 
               th Created At
-              td= Data.created_at
+              td= Data.created_at.split('T')[0]
             tr 
               th 
               td 
                 .button1#addProducts
-                  button Update product
-          
-      
-      
+                  button.btn-update Update product
 
 block append scripts 
   script(src="../../scripts/product.js") 
   script(src="../../scripts/product_list.js") 
+  script(src="../../scripts/detail_product.js") 
   
 
     

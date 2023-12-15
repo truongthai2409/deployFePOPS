@@ -12,7 +12,7 @@ let data_days = [];
 let data_revenues = [];
 const getDataStaffInfo = async () => {
   const axiosInstance = axios.create({
-    baseURL: "http://52.77.254.92:4000",
+    baseURL: "http://localhost:4000",
   });
   const result = await axiosInstance.get(`/managers/staff-info/${id}`);
   return result.data;

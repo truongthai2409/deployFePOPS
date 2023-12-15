@@ -3,7 +3,7 @@ const from_id = formSpan.textContent.trim();
 
 const toSpan = document.getElementById("to_id");
 const to_id = toSpan.textContent.trim();
-const socket = new io("http://52.77.254.92:4000");
+const socket = new io("http://localhost:4000");
 const sendButton = document.getElementById("button");
 const callVideoButton = document.getElementById("from_call_start");
 const stopVideoButton = document.getElementById("from_call_stop");

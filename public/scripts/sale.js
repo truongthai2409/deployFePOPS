@@ -9,7 +9,7 @@
 
 const voucher = document.getElementById("voucher");
 let Voucher = "";
-
+let voucher_code = ""
 voucher.addEventListener("submit", async (e) => {
   e.preventDefault();
   const voucherValue = document.getElementById("voucher_value").value;
@@ -18,7 +18,7 @@ voucher.addEventListener("submit", async (e) => {
   // console.log(voucherValue);
   try {
     const axiosInstance = axios.create({
-      baseURL: "http://52.77.254.92:4000",
+      baseURL: "http://localhost:4000",
       //
     });
     const response = await axiosInstance.post(
@@ -34,6 +34,7 @@ voucher.addEventListener("submit", async (e) => {
     });
     Voucher = parseInt(response.data.message);
     // console.log(Voucher)
+    voucher_code = voucherValue
     voucherSpan.innerHTML = response.data.message + " $";
     
   } catch (error) {
@@ -376,7 +377,7 @@ async function searchCustomer(event) {
     div.style.display = "block";
     try {
       const axiosInstance = axios.create({
-        baseURL: "http://52.77.254.92:4000",
+        baseURL: "http://localhost:4000",
       });
       const response = await axiosInstance.post("/search/customer-searching", {
         text: customer,
@@ -461,7 +462,7 @@ async function searchProduct(event) {
     div.style.display = "block";
     try {
       const axiosInstance = axios.create({
-        baseURL: "http://52.77.254.92:4000",
+        baseURL: "http://localhost:4000",
       });
       const response = await axiosInstance.post("/search/customer-searching", {
         text: customer,
@@ -552,7 +553,7 @@ addPament.addEventListener("click", async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
       const axiosInstance = axios.create({
-        baseURL: "http://52.77.254.92:4000",
+        baseURL: "http://localhost:4000",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -560,7 +561,7 @@ addPament.addEventListener("click", async () => {
       const response = await axiosInstance.post("/payments/pay-by-cash", {
         customer_id: idCustomer[0],
         product_list: cart_product,
-        voucher: Voucher ? Voucher : "",
+        voucher: voucher_code ? voucher_code : "",
         money_given: parseInt(cashCustomer),
       });
       if (response.status == 200) {

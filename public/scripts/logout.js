@@ -1,5 +1,5 @@
 const logout = document.querySelector("#logout");
-const URL = "http://52.77.254.92:4000";
+const URL = "http://localhost:4000";
 
 logout.addEventListener("click", async (e) => {
   // e.preventDefault();
