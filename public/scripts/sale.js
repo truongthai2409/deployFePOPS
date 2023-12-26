@@ -33,9 +33,9 @@ voucher.addEventListener("submit", async (e) => {
       text: `Voucher ${response.data.message} $`,
     }).then(() => {
       checkVoucher(Voucher);
+      checkVoucherTotal3(Voucher)
     })
     Voucher = parseInt(response.data.message);
-    // console.log(Voucher)
     voucher_code = voucherValue;
     voucherSpan.innerHTML = response.data.message + " $";
     
@@ -164,12 +164,12 @@ for (const button of addProductButtons) {
           product_list.splice(new_product_index, 1);
         }
         // giam gio hang
-        console.log(product_list);
+        // console.log(product_list);
         const total_money = product_list.reduce(
           (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
           0
         );
-        console.log(total_money);
+        // console.log(total_money);
         document.getElementById(
           "cart-payment-total"
         ).innerHTML = `${total_money} $`;
@@ -177,7 +177,7 @@ for (const button of addProductButtons) {
           "cart-payment-total2"
         ).innerText = `${calculateVoucher(Voucher, total_money)}`;
         document.getElementById("cart-payment-total3").innerText = `${
-          total_money * 0.1
+          calculateVoucher(Voucher, total_money)
         } $`;
       });
 
@@ -223,7 +223,7 @@ for (const button of addProductButtons) {
         ).innerText = `${calculateVoucher(Voucher, total_money)}`;
         document.getElementById(
           "cart-payment-total3"
-        ).innerText = `${total_money} $`;
+        ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
       });
 
       //==========Bang trong model thanh toan==========
@@ -294,7 +294,7 @@ for (const button of addProductButtons) {
         ).innerText = `${calculateVoucher(Voucher, total_money)}`;
         document.getElementById(
           "cart-payment-total3"
-        ).innerText = `${total_money} $`;
+        ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
       });
     } else {
       let productQuality = document.getElementById(
@@ -339,7 +339,7 @@ for (const button of addProductButtons) {
     ).innerText = `${calculateVoucher(Voucher, total_money)}`;
     document.getElementById(
       "cart-payment-total3"
-    ).innerText = `${total_money} $`;
+    ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
   });
 }
 
@@ -365,7 +365,16 @@ function checkVoucher(voucher) {
     // console.log(money)
     return document.getElementById(
       "cart-payment-total2"
-    ).innerText = `${calculateVoucher(voucher, money)}`
+    ).innerText = `${calculateVoucher(voucher, money)} $`
+  }
+}
+function checkVoucherTotal3(voucher) {
+  const money = parseInt(document.getElementById("cart-payment-total3").textContent);
+  if (money != 0) {
+    // console.log(money)
+    return document.getElementById(
+      "cart-payment-total3"
+    ).innerText = `${calculateVoucher(voucher, money)} $`
   }
 }
 
@@ -448,8 +457,6 @@ async function searchCustomer(event) {
           customerName.innerHTML = `<small>Customer: ${item.innerText}</small>`;
           div1.style.display = "none";
           customerExists = true;
-
-          // console.log(idCustomer)
         });
 
         item.addEventListener("blur", function () {
@@ -533,8 +540,6 @@ async function searchProduct(event) {
           customerName.innerHTML = `<small>Customer: ${item.innerText}</small>`;
           div1.style.display = "none";
           customerExists = true;
-
-          // console.log(idCustomer)
         });
 
         item.addEventListener("blur", function () {
@@ -553,12 +558,12 @@ async function searchProduct(event) {
 
 //=======payment======
 const addPament = document.getElementById("payMent");
-let abc = "";
+let textCash = "";
 
 addPament.addEventListener("click", async () => {
   // const customer_id = "654c8d08049ae263a8e688a6";
   const cashCustomer = document.getElementById("payment").value;
-  abc = cashCustomer;
+  textCash = cashCustomer;
   const cart_product = product_list.map((p) => {
     return {
       product_id: p.product_id,
@@ -632,7 +637,4 @@ addCustomer.addEventListener("click", async () => {
       ];
     },
   });
-  // if (formValues) {
-  //   Swal.fire(JSON.stringify(formValues));
-  // }
 });
