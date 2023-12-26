@@ -39,10 +39,11 @@ btnAddProducts.addEventListener("click", function () {
 
 //Hidden add product
 removeAddProducts.addEventListener("click", () => {
-  performAnimationAndHide();
+  performAnimationAndHide1();
+  // console.log("123")
 });
 
-async function performAnimationAndHide() {
+async function performAnimationAndHide1() {
   // Sử dụng `await` để đợi kết thúc animation
   await new Promise((resolve) => {
     modalContentProduct.style.animation = "hidden-modal 0.6s ease";
@@ -50,6 +51,7 @@ async function performAnimationAndHide() {
   });
 
   // Sau khi animation hoàn thành, chạy câu lệnh `addProducts.style.display`
+  
   addProducts.style.display = "none";
   modalContentProduct.style.animation = "appear-modal 1s ease";
 }

@@ -9,7 +9,7 @@
 
 const voucher = document.getElementById("voucher");
 let Voucher = "";
-let voucher_code = ""
+let voucher_code = "";
 voucher.addEventListener("submit", async (e) => {
   e.preventDefault();
   const voucherValue = document.getElementById("voucher_value").value;
@@ -31,10 +31,12 @@ voucher.addEventListener("submit", async (e) => {
       icon: "success",
       title: "success",
       text: `Voucher ${response.data.message} $`,
-    });
+    }).then(() => {
+      checkVoucher(Voucher);
+    })
     Voucher = parseInt(response.data.message);
     // console.log(Voucher)
-    voucher_code = voucherValue
+    voucher_code = voucherValue;
     voucherSpan.innerHTML = response.data.message + " $";
     
   } catch (error) {
@@ -44,11 +46,12 @@ voucher.addEventListener("submit", async (e) => {
       text: `${error.response.data.message}`,
     });
   }
+  
 });
 
 const cartWarp = document.querySelector(".cart-warp");
 const addProductButtons = document.querySelectorAll("#add_product");
-let customerExists = false
+let customerExists = false;
 
 let customer_id = "";
 let quantity = 1;
@@ -79,8 +82,6 @@ for (const button of addProductButtons) {
         quantity: quantity,
         retail_price: productPrice,
       });
-
-
 
       // Tạo thẻ chứa giá trị product_name
       const productNameElement = document.createElement("h4");
@@ -125,7 +126,9 @@ for (const button of addProductButtons) {
         const new_product_index = product_list.findIndex(
           (p) => p.product_id === productId
         );
-        product_list[new_product_index].product_id ? product_list[new_product_index].product_id : 0;
+        product_list[new_product_index].product_id
+          ? product_list[new_product_index].product_id
+          : 0;
         const p_id = product_list[new_product_index].product_id;
         const p_id_bill =
           product_list_bill[new_product_index].product_id + "_bill";
@@ -135,8 +138,6 @@ for (const button of addProductButtons) {
 
         let count = product_list[new_product_index].quantity - 1;
         let countBill = product_list_bill[new_product_index].quantity - 1;
-
-
 
         if (count <= 0) {
           cartWarp.removeChild(newCartItem);
@@ -155,13 +156,15 @@ for (const button of addProductButtons) {
         };
 
         span_quantity.innerHTML = product_list[new_product_index].quantity;
-        product_list_bill[new_product_index].quantity ? product_list_bill[new_product_index].quantity : 0;
+        product_list_bill[new_product_index].quantity
+          ? product_list_bill[new_product_index].quantity
+          : 0;
         td_quantity.innerText = product_list_bill[new_product_index].quantity;
         if (product_list[new_product_index].quantity == 0) {
-          product_list.splice(new_product_index, 1)
+          product_list.splice(new_product_index, 1);
         }
         // giam gio hang
-        console.log(product_list)
+        console.log(product_list);
         const total_money = product_list.reduce(
           (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
           0
@@ -172,11 +175,10 @@ for (const button of addProductButtons) {
         ).innerHTML = `${total_money} $`;
         document.getElementById(
           "cart-payment-total2"
-        ).innerText = `${total_money}`;
-        document.getElementById(
-          "cart-payment-total3"
-        ).innerText = `${total_money * 0.1} $`;
-
+        ).innerText = `${calculateVoucher(Voucher, total_money)}`;
+        document.getElementById("cart-payment-total3").innerText = `${
+          total_money * 0.1
+        } $`;
       });
 
       iconCaretUp.classList.add("fa-solid", "fa-square-caret-up");
@@ -218,11 +220,10 @@ for (const button of addProductButtons) {
         ).innerHTML = `${total_money} $`;
         document.getElementById(
           "cart-payment-total2"
-        ).innerText = `${total_money}`;
+        ).innerText = `${calculateVoucher(Voucher, total_money)}`;
         document.getElementById(
           "cart-payment-total3"
         ).innerText = `${total_money} $`;
-
       });
 
       //==========Bang trong model thanh toan==========
@@ -290,7 +291,7 @@ for (const button of addProductButtons) {
         ).innerHTML = `${total_money} $`;
         document.getElementById(
           "cart-payment-total2"
-        ).innerText = `${total_money}`;
+        ).innerText = `${calculateVoucher(Voucher, total_money)}`;
         document.getElementById(
           "cart-payment-total3"
         ).innerText = `${total_money} $`;
@@ -335,7 +336,7 @@ for (const button of addProductButtons) {
     ).innerHTML = `${total_money} $`;
     document.getElementById(
       "cart-payment-total2"
-    ).innerText = `${total_money}`;
+    ).innerText = `${calculateVoucher(Voucher, total_money)}`;
     document.getElementById(
       "cart-payment-total3"
     ).innerText = `${total_money} $`;
@@ -351,7 +352,22 @@ function calculateTotalRetailPrice(products) {
   return totalRetailPrice;
 }
 
-
+function calculateVoucher(voucher, price) {
+  price = price - voucher;
+  if (price <= 0) {
+    return 0;
+  }
+  return price;
+}
+function checkVoucher(voucher) {
+  const money = parseInt(document.getElementById("cart-payment-total2").textContent);
+  if (money != 0) {
+    // console.log(money)
+    return document.getElementById(
+      "cart-payment-total2"
+    ).innerText = `${calculateVoucher(voucher, money)}`
+  }
+}
 
 //=====================search  Customer===========
 
@@ -397,7 +413,7 @@ async function searchCustomer(event) {
         let liList = document.createElement("li");
         liList.classList.add("list-FindCustomer-item");
         newUlList.append(liList);
-        liList.textContent = 'Not found';
+        liList.textContent = "Not found";
         return;
       }
       customer_list = [...response.data];
@@ -409,7 +425,7 @@ async function searchCustomer(event) {
         liList.classList.add("list-FindCustomer-item");
         liList.setAttribute("id", `${item._id}`);
         newUlList.append(liList);
-        //show customer list 
+        //show customer list
         liList.textContent = `Name: ${item.full_name} , Phone: ${item.phone_number}`;
       });
       customer_list = [];
@@ -425,13 +441,13 @@ async function searchCustomer(event) {
 
       listItems.forEach((item) => {
         item.addEventListener("click", function () {
-          console.log(item)
+          // console.log(item)
           formInputForcus.value = item.innerText;
           idCustomer.push(item.id);
           ///=================gan id customer========
           customerName.innerHTML = `<small>Customer: ${item.innerText}</small>`;
           div1.style.display = "none";
-          customerExists = true
+          customerExists = true;
 
           // console.log(idCustomer)
         });
@@ -482,7 +498,7 @@ async function searchProduct(event) {
         let liList = document.createElement("li");
         liList.classList.add("list-FindCustomer-item");
         newUlList.append(liList);
-        liList.textContent = 'Not found';
+        liList.textContent = "Not found";
         return;
       }
       customer_list = [...response.data];
@@ -494,7 +510,7 @@ async function searchProduct(event) {
         liList.classList.add("list-FindCustomer-item");
         liList.setAttribute("id", `${item._id}`);
         newUlList.append(liList);
-        //show customer list 
+        //show customer list
         liList.textContent = `Name: ${item.full_name} , Phone: ${item.phone_number}`;
       });
       customer_list = [];
@@ -510,13 +526,13 @@ async function searchProduct(event) {
 
       listItems.forEach((item) => {
         item.addEventListener("click", function () {
-          console.log(item)
+          console.log(item);
           formInputForcus.value = item.innerText;
           idCustomer.push(item.id);
           ///=================gan id customer========
           customerName.innerHTML = `<small>Customer: ${item.innerText}</small>`;
           div1.style.display = "none";
-          customerExists = true
+          customerExists = true;
 
           // console.log(idCustomer)
         });
@@ -537,7 +553,7 @@ async function searchProduct(event) {
 
 //=======payment======
 const addPament = document.getElementById("payMent");
-let abc = ''
+let abc = "";
 
 addPament.addEventListener("click", async () => {
   // const customer_id = "654c8d08049ae263a8e688a6";
@@ -570,15 +586,15 @@ addPament.addEventListener("click", async () => {
           icon: "success",
           title: "Payment success",
           showConfirmButton: false,
-          timer: 1500
+          timer: 1500,
         });
 
         setTimeout(() => {
           performAnimationAndHide();
           setTimeout(() => {
             location.reload();
-          }, 500)
-        }, 1500)
+          }, 500);
+        }, 1500);
       }
     } catch (error) {
       Swal.fire({
@@ -591,14 +607,13 @@ addPament.addEventListener("click", async () => {
     Swal.fire({
       icon: "error",
       title: "Oops...",
-      text: 'Cash is not enough',
+      text: "Cash is not enough",
     });
   }
 });
 
-
 const addCustomer = document.getElementById("addCustomer");
-addCustomer.addEventListener('click', async ()=>{
+addCustomer.addEventListener("click", async () => {
   const { value: formValues } = await Swal.fire({
     title: "Add customer",
     html: `
@@ -613,12 +628,11 @@ addCustomer.addEventListener('click', async ()=>{
     preConfirm: () => {
       return [
         document.getElementById("swal-input1").value,
-        document.getElementById("swal-input2").value
+        document.getElementById("swal-input2").value,
       ];
-    }
+    },
   });
   // if (formValues) {
   //   Swal.fire(JSON.stringify(formValues));
   // }
-})
-
+});
