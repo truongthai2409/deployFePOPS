@@ -49,7 +49,7 @@ block container
               p(style= 'display: none')= data.email 
               //- (onclick="resendEmail()")
             td 
-              a(href=`/chat/${data._id}`)
+              a(href=`/chat/?idChat=${data._id}`)
                 i.fa-solid.fa-comment-dots.chat
             td
               if `${data.status}` == 1 

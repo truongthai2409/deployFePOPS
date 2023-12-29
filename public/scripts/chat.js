@@ -8,7 +8,6 @@ const sendButton = document.getElementById("button");
 const callVideoButton = document.getElementById("from_call_start");
 const stopVideoButton = document.getElementById("from_call_stop");
 
-
 const openStream = () => {
   const config = { audio: false, video: true };
   return navigator.mediaDevices.getUserMedia(config);
@@ -54,6 +53,23 @@ sendButton.addEventListener("click", (event) => {
   outputMessage(message, true);
   scrollToBottom();
 });
+function submitMessage(event) {
+  if (event.key === "Enter") {
+    const messageInput = document.getElementById("msg");
+    const message = messageInput.value;
+    console.log(message);
+    messageInput.value = "";
+
+    socket.emit("send_message", {
+      from: from_id,
+      content: message,
+      to: to_id, //another client
+    });
+
+    outputMessage(message, true);
+    scrollToBottom();
+  }
+}
 
 callVideoButton.addEventListener("click", (event) => {
   event.preventDefault();
@@ -97,7 +113,6 @@ socket.on("video_calling", (data) => {
   });
   console.log(data);
   socket.emit("sender_is_calling", data);
-
 });
 
 socket.on("receiver_is_calling", () => {
@@ -113,19 +128,19 @@ socket.on("receiver_is_calling", () => {
 
 //caller
 openStream().then((stream) => {
-  playStream('from_video', stream)
-  const call = peer.call(to_peer_id, stream)
-  call.on('stream', toStream => playStream('to_video', toStream))
-})
+  playStream("from_video", stream);
+  const call = peer.call(to_peer_id, stream);
+  call.on("stream", (toStream) => playStream("to_video", toStream));
+});
 
 //callee
-peer.on('call', (call) => {
+peer.on("call", (call) => {
   openStream().then((stream) => {
-    call.answer(stream)
-    playStream('from_video', stream)
-    call.on('stream', toStream => playStream('to_video', toStream))
-  })
-})
+    call.answer(stream);
+    playStream("from_video", stream);
+    call.on("stream", (toStream) => playStream("to_video", toStream));
+  });
+});
 
 // add messenger
 
@@ -142,17 +157,17 @@ function outputMessage(message, checkSender) {
     fullname = document.getElementById("from_fullname").textContent;
     time = document.getElementById("from_time").textContent;
     classDiv = ["d-flex", "flex-row", "justify-content-end", "message"];
-    nameStyle = "text-align: right; margin-right: 10px"
-    pTextStyle = "background-color: #f5f6f7; display: inline-block; with: 100%"
-    divTextWaper = 'text-align: right'
+    nameStyle = "text-align: right; margin-right: 10px";
+    pTextStyle = "background-color: #f5f6f7; display: inline-block; with: 100%";
+    divTextWaper = "text-align: right";
   } else {
     avt = document.getElementById("to_avt").src;
     fullname = document.getElementById("to_fullname").textContent;
     time = document.getElementById("to_time").textContent;
     classDiv = ["d-flex", "flex-row", "justify-content-start", "message"];
-    nameStyle = "text-align: left; margin-left: 20px"
-    pTextStyle = "background-color: #f5f6f7; display: inline-block; with: 100%"
-    divTextWaper = 'text-align: left'
+    nameStyle = "text-align: left; margin-left: 20px";
+    pTextStyle = "background-color: #f5f6f7; display: inline-block; with: 100%";
+    divTextWaper = "text-align: left";
   }
   const div = document.createElement("div");
 
@@ -161,23 +176,24 @@ function outputMessage(message, checkSender) {
   }
   // div.classList.add(classDiv);
   const pText = document.createElement("p");
-  const classP = [
-    "small",
-    "p-2",
-    "ms-3",
-    "mb-1",
-    "rounded-3",
-  ];
+  const classP = ["small", "p-2", "ms-3", "mb-1", "rounded-3"];
   for (const abc of classP) {
     pText.classList.add(abc);
   }
 
   //===============
   // pText.style = "background-color: #f5f6f7; display: inline-block; with: 100%"
-  pText.style = pTextStyle
+  pText.style = pTextStyle;
 
   const timer = document.createElement("p");
-  const timeClass = ["small", "ms-3", "mb-3", "rounded-3", "text-muted", "float-end"];
+  const timeClass = [
+    "small",
+    "ms-3",
+    "mb-3",
+    "rounded-3",
+    "text-muted",
+    "float-end",
+  ];
   for (const index of timeClass) {
     timer.classList.add(index);
   }
@@ -188,7 +204,7 @@ function outputMessage(message, checkSender) {
   //   name.classList.add(abc);
   // }
 
-  name.style = nameStyle
+  name.style = nameStyle;
 
   const avatar = document.createElement("img");
   avatar.src = avt;
@@ -199,8 +215,8 @@ function outputMessage(message, checkSender) {
   const DivWaper = document.createElement("div");
   const DivText = document.createElement("div");
 
-  DivText.style = divTextWaper
-  DivText.append(pText)
+  DivText.style = divTextWaper;
+  DivText.append(pText);
 
   const buttonIcon = document.createElement("button");
 
@@ -261,7 +277,9 @@ function printCallVideo() {
 
   callWindow.document.write("</body></html>");
 
-  callWindow.document.body.append('<script src=""./scripts/chat.js""></script>');
+  callWindow.document.body.append(
+    '<script src=""./scripts/chat.js""></script>'
+  );
 
   callWindow.document.close();
   // callWindow.print();
@@ -274,42 +292,39 @@ function scrollToBottom() {
 
 window.onload = scrollToBottom;
 
-const friendIds = document.querySelectorAll('span#friend_id');
+const friendIds = document.querySelectorAll("span#friend_id");
 const friendIdList = [];
 
 for (const friendId of friendIds) {
   friendIdList.push(friendId.textContent.trim());
 }
 
-socket.emit('check_friend_list_status', friendIdList)
-socket.on('result_status_friends_list', (result) => {
-
+socket.emit("check_friend_list_status", friendIdList);
+socket.on("result_status_friends_list", (result) => {
   for (const friendId of friendIdList) {
     for (const res of result) {
       if (res.id == friendId) {
         let div = document.getElementById(`${friendId}001`);
-        if (res.status == 'Offline') {
+        if (res.status == "Offline") {
           div.style.backgroundColor = "red";
-        }
-        else {
+        } else {
           div.style.backgroundColor = "green";
         }
       }
     }
   }
 
-
-  let ppp = document.getElementById(`${to_id}-status`); 4
-  let status002 = document.getElementById(`${to_id}002`)
-  console.log(document.getElementById(`${to_id}001`).style.backgroundColor)
-  if (document.getElementById(`${to_id}001`).style.backgroundColor == 'red') {
-    ppp.innerHTML = 'Offline'
-    status002.style.backgroundColor = 'red'
-  } else if (document.getElementById(`${to_id}001`).style.backgroundColor == 'green') {
-    status002.style.backgroundColor = 'green'
-    ppp.innerHTML = 'Online'
-  };
-
-})
-
-
+  let ppp = document.getElementById(`${to_id}-status`);
+  4;
+  let status002 = document.getElementById(`${to_id}002`);
+  console.log(document.getElementById(`${to_id}001`).style.backgroundColor);
+  if (document.getElementById(`${to_id}001`).style.backgroundColor == "red") {
+    ppp.innerHTML = "Offline";
+    status002.style.backgroundColor = "red";
+  } else if (
+    document.getElementById(`${to_id}001`).style.backgroundColor == "green"
+  ) {
+    status002.style.backgroundColor = "green";
+    ppp.innerHTML = "Online";
+  }
+});

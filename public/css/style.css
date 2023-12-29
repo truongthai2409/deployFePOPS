@@ -1642,7 +1642,7 @@ html {
   transform: translateY(-7px);
   transition: all 0.15s linear;
 }
-.show-product .list-card {
+.show-product .list-card, .show-product .list-new {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-rows: minmax(min-content, max-content);

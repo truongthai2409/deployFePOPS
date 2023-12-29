@@ -22,8 +22,6 @@ let chart_data = {};
 let config = {};
 
 let my_chart;
-// let chart_data = {};
-// let config = {};
 
 const CHART_COLORS = {
   red: "rgb(255, 99, 132)",
@@ -109,47 +107,6 @@ async function getData() {
   return config;
 }
 getData();
-// async function firstAsyncFunction() {
-//   // Thực hiện công việc bất đồng bộ
-//   // console.log(getData())
-//   return getData();
-// }
-
-// async function secondAsyncFunction() {
-//   // Gọi hàm đầu tiên và chờ kết quả
-//   const result = await firstAsyncFunction();
-//   // console.log(result);
-//   // return (new_chart = new Chart(myChart2D, result));
-//   // Hàm này sẽ chỉ chạy khi firstAsyncFunction hoàn thành và trả về kết quả
-// }
-
-// Gọi hàm thứ hai
-// secondAsyncFunction()
-//   .then((secondResult) => {
-//     // Hàm này sẽ chỉ chạy khi secondAsyncFunction hoàn thành và trả về kết quả
-//     // console.log(secondResult);
-//   })
-//   .catch((error) => {
-//     // Xử lý lỗi nếu có
-//     console.error(error);
-//   });
-
-// firstAsyncFunction()
-//   .then((result) => {
-//     // Hàm này sẽ chạy khi firstAsyncFunction hoàn thành và trả về kết quả
-//     console.log(result);
-
-//     // Gọi hàm không phải là async ngay tại đây
-//     return nonAsyncFunction();
-//   })
-//   .then((nonAsyncResult) => {
-//     // Hàm này sẽ chạy khi nonAsyncFunction hoàn thành và trả về kết quả
-//     console.log(nonAsyncResult);
-//   })
-//   .catch((error) => {
-//     // Xử lý lỗi nếu có
-//     console.error(error);
-//   });
 
 //============== calender ==============
 function addData(chart, label, data_revenues, data_total_orders) {
@@ -167,30 +124,37 @@ function addData(chart, label, data_revenues, data_total_orders) {
   chart.update();
 }
 
-$(function() {
-
-  var start = moment().subtract(29, 'days');
+$(function () {
+  var start = moment().subtract(29, "days");
   var end = moment();
 
   function cb(start, end) {
-      $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+    $("#reportrange span").html(
+      start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY")
+    );
   }
 
-  $('#reportrange').daterangepicker({
+  $("#reportrange").daterangepicker(
+    {
       startDate: start,
       endDate: end,
       ranges: {
-         'Today': [moment(), moment()],
-         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-         'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-         'This Month': [moment().startOf('month'), moment().endOf('month')],
-         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-      }
-  }, cb);
+        Today: [moment(), moment()],
+        Yesterday: [moment().subtract(1, "days"), moment().subtract(1, "days")],
+        "Last 7 Days": [moment().subtract(6, "days"), moment()],
+        "Last 30 Days": [moment().subtract(29, "days"), moment()],
+        "This Month": [moment().startOf("month"), moment().endOf("month")],
+        "Last Month": [
+          moment().subtract(1, "month").startOf("month"),
+          moment().subtract(1, "month").endOf("month"),
+        ],
+      },
+    },
+    cb
+  );
 
   cb(start, end);
-})
+});
 $(document).ready(function () {
   $('input[name="daterange"]').daterangepicker();
 
@@ -249,74 +213,29 @@ $(function () {
         to: to,
       };
 
-      console.log(data_from_to);
-      // callApi(
-      //   "http://localhost:4000/revenue/revenue",
-      //   "GET",
-      //   data_from_to,
-      //   handleSuccess,
-      //   handleError
-      // );
-      // getDataCalendar(data_from_to)
-      // getDataList1(data_from_to).then((data12) => {
-      //   console.log(data12);
-      // });
-
       getDataList1(data_from_to).then((result) => {
         console.log(result.data);
         my_chart.data.labels = result.data.days.reverse();
-        console.log(my_chart.data.labels);
-        // console.log(chart.data.datasets)
 
         my_chart.data.datasets[0] = {
           ...my_chart.data.datasets[0],
-          data: result.data.revenue_list,
+          data: result.data.revenue_list.reverse(),
         };
         my_chart.data.datasets[1] = {
           ...my_chart.data.datasets[1],
-          data: result.data.total_order_list,
+          data: result.data.total_order_list.reverse(),
         };
 
         my_chart.update();
-        // handleSuccess(data);
-        // data_days = data.days;
-        // data_revenues = data.revenue_list;
-        // data_total_orders = data.total_order_list;
-        // createChart(data_days, data_revenues, data_total_orders)
-        // chart.update()
-        // addData(my_chart, data.days, data.revenue_list, data.total_order_list);
+      });
+      getOrderList(data_from_to).then((result) => {
+        upDateTable(result.data);
+        console.log(result.data);
       });
     }
   );
 });
-// function callApi(
-//   url,
-//   method,
-//   data,
-//   successCallback,
-//   errorCallback
-// ) {
-//   $.ajax({
-//     url: url,
-//     type: method,
-//     contentType: 'application/json',
-// data: {
-//   "from": "2023-12-2",
-//   "to": "2023-12-10"
-// },
-//     success: function (response) {
-//       if (successCallback) {
-//         console.log(response)
-//         // handleSuccess(response);
-//       }
-//     },
-//     error: function (error) {
-//       if (errorCallback) {
-//         errorCallback(error);
-//       }
-//     },
-//   });
-// }
+
 const getDataList1 = async (data_from_to) => {
   const axiosInstance = axios.create({
     baseURL: "http://localhost:4000",
@@ -326,70 +245,8 @@ const getDataList1 = async (data_from_to) => {
   return result;
 };
 
-async function getDataCalendar(data) {
-  console.log(data);
-  try {
-    const axiosInstance = await axios.create({
-      baseURL: "http://localhost:4000",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    axiosInstance
-      .get("/revenue/revenue", {
-        from: "2023-12-1",
-        to: "2023-12-6",
-      })
-      .then(function (response) {
-        console.log(response);
-      });
-  } catch (error) {
-    console.log(error);
-  }
-}
-// function handleSuccess(data) {
-//   console.log("Kết quả:", data);
-//   data_days = data.days;
-//   // labels: data_days
-//   // datasets : data_revenues
-//   data_revenues = data.revenue_list;
-//   data_total_orders = data.total_order_list;
-//   data_total_product = data.product_quantity_list;
-//   // secondAsyncFunction()
-//   //   .then((secondResult) => {
-//   //     // Hàm này sẽ chỉ chạy khi secondAsyncFunction hoàn thành và trả về kết quả
-//   //     console.log(secondResult);
-//   //   })
-//   //   .catch((error) => {
-//   //     // Xử lý lỗi nếu có
-//   //     console.error(error);
-//   //   });
-//   // upDateCanvas(data_days, data_revenues, data_total_orders, data_total_product);
-//   // removeData(new_chart)
-
-//   addData(new_chart, data_days, data_revenues);
-//   console.log(new_chart.data);
-
-// }
-
-function handleError(error) {
-  console.error("Lỗi:", error);
-}
-// function upDateCanvas( data_days, data_revenues ) {
-//   addData()
-// }
-
 function removeData(chart) {
   chart.data.labels.pop();
-  // chart.data.datasets.forEach((dataset) => {
-  //   dataset.forEach((item)=>{
-  //     item.data.pop()
-  //   })
-  // });
-  // // chart.labels.forEach((label) => {
-  // //   label = '';
-  // // });
-  // console.log(chart.data)
   chart.update();
 }
 
@@ -402,72 +259,186 @@ const getDataList = async (id) => {
   return result.data;
 };
 
-const showModal = document.querySelectorAll("#show-modal");
-const data = document.querySelectorAll("#data");
+const getOrderList = async (data) => {
+  const axiosInstance = axios.create({
+    baseURL: "http://localhost:4000",
+  });
+  console.log(data);
+  const result = await axiosInstance.post(`/revenue/order-list`, data);
+  return result;
+};
+//
 
-//=======================
-let addProducts = document.querySelector(".add-products"); //css animatio
-let btnAddProducts = document.getElementById("addProducts"); //show model
-let modalContentProduct = document.querySelector(".modal-dashboard-product");
-let removeAddProducts = document.getElementById("turnOffAddProduct");
-//display add product
-for (const button of showModal) {
-  button.addEventListener("click", () => {
-    addProducts.style.display = "block";
-    let productId = button.querySelector("#product_id").textContent;
-    console.log(productId);
-    getDataList(productId).then((data) => {
-      console.log(data);
-      // console.log(data.customer.full_name)
-      const customer_name = document.getElementById("customer_name");
-      const created_by = document.getElementById("created_by");
-      const created_at = document.getElementById("created_at");
-      const table = document.querySelector("table");
-      const total = document.getElementById("total");
-      // console.log(table);
-      for (const product of data.product_list) {
-        const row = document.createElement("tr");
+function showModal() {
+  const showModal = document.querySelectorAll("#show-modal");
+  const data = document.querySelectorAll("#data");
 
-        // Thêm cột tên sản phẩm
-        const product_name_cell = document.createElement("td");
-        product_name_cell.innerHTML = product.product_name;
-        row.appendChild(product_name_cell);
+  //=======================
+  let addProducts = document.querySelector(".add-products"); //css animatio
+  let btnAddProducts = document.getElementById("addProducts"); //show model
+  let modalContentProduct = document.querySelector(".modal-dashboard-product");
+  let removeAddProducts = document.getElementById("turnOffAddProduct");
+  //display add product
+  for (const button of showModal) {
+    button.addEventListener("click", () => {
+      addProducts.style.display = "block";
+      let productId = button.querySelector("#product_id").textContent;
+      // console.log(productId);
+      getDataList(productId).then((data) => {
+        // console.log(data);
+        // console.log(data.customer.full_name)
+        const customer_name = document.getElementById("customer_name");
+        const created_by = document.getElementById("created_by");
+        const created_at = document.getElementById("created_at");
+        const table = document.querySelector("table");
+        const total = document.getElementById("total");
+        // console.log(table);
+        for (const product of data.product_list) {
+          const row = document.createElement("tr");
+          row.setAttribute('id', 'new_product_detail')
 
-        // Thêm cột số lượng
-        const quantity_cell = document.createElement("td");
-        quantity_cell.innerHTML = product.quantity;
-        row.appendChild(quantity_cell);
+          // Thêm cột tên sản phẩm
+          const product_name_cell = document.createElement("td");
+          product_name_cell.innerHTML = product.product_name;
+          row.appendChild(product_name_cell);
 
-        // Thêm cột giá
-        const price_cell = document.createElement("td");
-        price_cell.innerHTML = product.price;
-        row.appendChild(price_cell);
+          // Thêm cột số lượng
+          const quantity_cell = document.createElement("td");
+          quantity_cell.innerHTML = product.quantity;
+          row.appendChild(quantity_cell);
 
-        table.appendChild(row);
-      }
+          // Thêm cột giá
+          const price_cell = document.createElement("td");
+          price_cell.innerHTML = product.price;
+          row.appendChild(price_cell);
 
-      customer_name.innerHTML = `Customer: ${data.customer.full_name}`;
-      created_by.innerHTML = `Sold By: ${data.created_by.full_name}`;
-      created_at.innerText = moment(data.created_at).format(
-        "DD/MM/YYYY - HH:mm:ss"
-      );
-      total.innerHTML = `${data.total} $`;
+          table.appendChild(row);
+        }
+
+        customer_name.innerHTML = `Customer: ${data.customer.full_name}`;
+        created_by.innerHTML = `Sold By: ${data.created_by.full_name}`;
+        created_at.innerText = moment(data.created_at).format(
+          "DD/MM/YYYY - HH:mm:ss"
+        );
+        total.innerHTML = `${data.total} $`;
+      });
+    });
+  }
+  //Hidden add product
+  removeAddProducts.addEventListener("click", () => {
+    console.log('123')
+    const table = document.querySelector("table");
+    const item = document.getElementById('new_product_detail')
+    table.removeChild(item);
+    performAnimationAndHide();
+  });
+
+  async function performAnimationAndHide() {
+    // Sử dụng `await` để đợi kết thúc animation
+    await new Promise((resolve) => {
+      modalContentProduct.style.animation = "hidden-modal 0.6s ease";
+      modalContentProduct.addEventListener("animationend", resolve);
+    });
+
+    // Sau khi animation hoàn thành, chạy câu lệnh `addProducts.style.display`
+    addProducts.style.display = "none";
+    modalContentProduct.style.animation = "appear-modal 1s ease";
+  }
+}
+
+function upDateTable(data) {
+  const chartList = document.querySelector(".chart-list-product");
+  const table = document.querySelector(".table-list-product.table");
+  chartList.removeChild(table);
+  const newTable = document.createElement("table");
+  newTable.classList.add("table-list-product");
+  newTable.classList.add("table");
+  newTable.createTBody();
+  // newTable.append(tbody);
+  const th_lable = [
+    "Code",
+    "Total",
+    "Customer",
+    "Methods",
+    "Discount ",
+    "Cash",
+    "Due",
+    "Created_at",
+    "Created_by",
+  ];
+  const thead_table = document.createElement("tr");
+  th_lable.forEach((element) => {
+    const th_table = document.createElement("th");
+    th_table.append(element);
+    thead_table.append(th_table);
+  });
+
+  newTable.append(thead_table);
+  chartList.append(newTable);
+  console.log(data);
+
+  data.forEach((element) => {
+    element.forEach((item) => {
+      const tr = document.createElement("tr");
+      
+      const td_Code = document.createElement("td");
+      const a = document.createElement("a");
+      const p = document.createElement("p");
+      
+      const td_Total = document.createElement('td');
+      const td_Customer = document.createElement('td');
+      const td_Methods = document.createElement('td');
+      const td_Discount = document.createElement('td');
+      const td_Cash = document.createElement('td');
+      const td_Due = document.createElement('td');
+      const td_Created_at = document.createElement('td');
+      const td_Created_by = document.createElement('td');
+      const a_Created_by = document.createElement('a');
+      const span_Created_by = document.createElement('span');
+
+
+      tr.setAttribute("id", `data`);
+      a.setAttribute("id", "show-modal");
+      a.textContent = item.invoice_code;
+      p.setAttribute("id", "product_id");
+      p.textContent = item._id;
+
+      td_Total.textContent = `${item.subtotal} $`;
+      td_Customer.textContent = item.customer.full_name;
+      td_Methods.textContent = item.payment_method
+      td_Discount.textContent = `${item.discount} $`;
+      td_Cash.textContent = item.payment_method == 'Paypal' ? '-' : `${item.money_given}$`
+      td_Due.textContent = item.payment_method == 'Paypal' ? '-' : `${item.money_back}$`
+      td_Created_at.textContent = item.created_at.split('T')[0]
+      
+      a.append(p);
+      td_Code.append(a);
+      
+      a_Created_by.setAttribute('href',`contacts/staffs/${item.created_by._id}`)
+      span_Created_by.textContent = item.created_by.full_name
+      
+      a_Created_by.append(span_Created_by)
+      td_Created_by.append(a_Created_by)
+
+      // vong for tr append td
+      tdUpdate = [
+        td_Code,
+        td_Total,
+        td_Customer,
+        td_Methods,
+        td_Discount,
+        td_Cash,
+        td_Due,
+        td_Created_at,
+        td_Created_by,
+      ]
+      tdUpdate.forEach(item => {
+        tr.append(item)
+      });
+      newTable.append(tr);
     });
   });
+  showModal();
 }
-//Hidden add product
-removeAddProducts.addEventListener("click", () => {
-  performAnimationAndHide();
-});
 
-async function performAnimationAndHide() {
-  // Sử dụng `await` để đợi kết thúc animation
-  await new Promise((resolve) => {
-    modalContentProduct.style.animation = "hidden-modal 0.6s ease";
-    modalContentProduct.addEventListener("animationend", resolve);
-  });
-
-  // Sau khi animation hoàn thành, chạy câu lệnh `addProducts.style.display`
-  addProducts.style.display = "none";
-  modalContentProduct.style.animation = "appear-modal 1s ease";
-}
+showModal();

@@ -22,18 +22,16 @@ const middleware = require("../middlewares/getProduct.js");
 function route(app) {
   let accessToken = "";
   let avatar = [];
-  let role = '';
+  let role = "";
   // app.use((req, res, next)=>{
   //   accessToken = req.cookies
   // })
 
   app.get(
-    "/chat/:user_id",
+    "/chat",
     (req, res, next) => {
-      if (accessToken != "") {
-        req.accessToken = accessToken;
-        return next();
-      }
+      req.data = accessToken;
+      return next();
     },
     newChat
   );
@@ -68,7 +66,7 @@ function route(app) {
         const axiosInstance = await axios.create({
           baseURL: `http://${process.env.HOST_BE}:${process.env.API}`,
         });
-        axiosInstance.get("/revenue/order-list").then(function (response) {
+        axiosInstance.post("/revenue/order-list").then(function (response) {
           const data = [...response.data];
           const newObject = Object.assign(data, avatar);
           req.data = newObject;
@@ -368,9 +366,6 @@ function route(app) {
   //   req.data = avatar.persion;
   //   !accessToken ? res.redirect("/") : next();
   // }
-  
 }
-
-
 
 module.exports = route;

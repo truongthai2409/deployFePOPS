@@ -92,7 +92,7 @@ block container
                       #emoji_select.emoji(style= "position: absolute; z-index: 2; width: 352; height: 435px; bottom: 113px; right: 122px; display: none;")
                       .text-muted.d-flex.justify-content-start.align-items-center.pe-3.pt-3.mt-2
                         img(src=`${Data.from_user.avatar_url}` alt='avatar 3' style='height: 35px; width: 35px; border-radius: 50%; object-fit: cover; margin-right: 10px')
-                        input#msg.form-control.form-control-lg.me-3(type='text' placeholder='Enter message' autocomplete='off')
+                        input#msg.form-control.form-control-lg.me-3(type='text' placeholder='Enter message' autocomplete='off' onkeydown="submitMessage(event)")
                         a.ms-1.text-muted(style= 'cursor: pointer;')
                           i#mic.fa-solid.fa-microphone
                         a.ms-3.text-muted(style= 'cursor: pointer;')

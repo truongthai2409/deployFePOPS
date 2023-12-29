@@ -33,12 +33,11 @@ voucher.addEventListener("submit", async (e) => {
       text: `Voucher ${response.data.message} $`,
     }).then(() => {
       checkVoucher(Voucher);
-      checkVoucherTotal3(Voucher)
-    })
+      checkVoucherTotal3(Voucher);
+    });
     Voucher = parseInt(response.data.message);
     voucher_code = voucherValue;
     voucherSpan.innerHTML = response.data.message + " $";
-    
   } catch (error) {
     Swal.fire({
       icon: "error",
@@ -46,302 +45,303 @@ voucher.addEventListener("submit", async (e) => {
       text: `${error.response.data.message}`,
     });
   }
-  
 });
 
-const cartWarp = document.querySelector(".cart-warp");
-const addProductButtons = document.querySelectorAll("#add_product");
-let customerExists = false;
+var customer_id = "";
+var quantity = 1;
+var product_list = [];
+var product_list_bill = [];
 
-let customer_id = "";
-let quantity = 1;
-let product_list = [];
-let product_list_bill = [];
+function clickProduct() {
+  const cartWarp = document.querySelector(".cart-warp");
+  const addProductButtons = document.querySelectorAll("#add_product");
+  let customerExists = false;
+  for (const button of addProductButtons) {
+    button.addEventListener("click", () => {
+      let productId = button.querySelector("#product_id").textContent;
+      let productPrice = button.querySelector("#retail_price").textContent;
+      let productName = button.querySelector("#product_name").textContent;
 
-for (const button of addProductButtons) {
-  button.addEventListener("click", () => {
-    let productId = button.querySelector("#product_id").textContent;
-    let productPrice = button.querySelector("#retail_price").textContent;
-    let productName = button.querySelector("#product_name").textContent;
+      const index = product_list.findIndex((p) => p.product_id === productId);
+      const index_bill = product_list_bill.findIndex(
+        (p) => p.product_id === productId
+      );
+      if (index == -1) {
+        // Nếu sản phẩm chưa tồn tại, thêm nó vào mảng
+        product_list.push({
+          product_name: productName,
+          product_id: productId,
+          quantity: quantity,
+          retail_price: productPrice,
+        });
+        product_list_bill.push({
+          product_name: productName,
+          product_id: productId,
+          quantity: quantity,
+          retail_price: productPrice,
+        });
 
-    const index = product_list.findIndex((p) => p.product_id === productId);
-    const index_bill = product_list_bill.findIndex(
-      (p) => p.product_id === productId
-    );
-    if (index == -1) {
-      // Nếu sản phẩm chưa tồn tại, thêm nó vào mảng
-      product_list.push({
-        product_name: productName,
-        product_id: productId,
-        quantity: quantity,
-        retail_price: productPrice,
-      });
-      product_list_bill.push({
-        product_name: productName,
-        product_id: productId,
-        quantity: quantity,
-        retail_price: productPrice,
-      });
+        // Tạo thẻ chứa giá trị product_name
+        const productNameElement = document.createElement("h4");
+        productNameElement.textContent = productName;
 
-      // Tạo thẻ chứa giá trị product_name
-      const productNameElement = document.createElement("h4");
-      productNameElement.textContent = productName;
+        // Tạo thẻ chứa giá trị retail_price
+        const productPriceElement = document.createElement("span");
+        productPriceElement.textContent = productPrice;
 
-      // Tạo thẻ chứa giá trị retail_price
-      const productPriceElement = document.createElement("span");
-      productPriceElement.textContent = productPrice;
+        //Create tag i
+        const productTrashElement = document.createElement("i");
+        const iconCaretDown = document.createElement("i");
+        const iconCaretUp = document.createElement("i");
 
-      //Create tag i
-      const productTrashElement = document.createElement("i");
-      const iconCaretDown = document.createElement("i");
-      const iconCaretUp = document.createElement("i");
+        //Create span quality
+        const qualityIconElement = document.createElement("span");
 
-      //Create span quality
-      const qualityIconElement = document.createElement("span");
+        qualityIconElement.setAttribute("id", `${productId}`);
+        qualityIconElement.innerText = quantity;
 
-      qualityIconElement.setAttribute("id", `${productId}`);
-      qualityIconElement.innerText = quantity;
+        const newCartItem = document.createElement("div");
+        const newSetPrice = document.createElement("div");
+        const newSetName = document.createElement("div");
+        const newSetitem = document.createElement("div");
+        const newLine = document.createElement("div");
 
-      const newCartItem = document.createElement("div");
-      const newSetPrice = document.createElement("div");
-      const newSetName = document.createElement("div");
-      const newSetitem = document.createElement("div");
-      const newLine = document.createElement("div");
+        newLine.classList.add("line");
+        cartWarp.append(newCartItem, newLine);
 
-      newLine.classList.add("line");
-      cartWarp.append(newCartItem, newLine);
+        newCartItem.classList.add("cart-item");
+        newCartItem.append(newSetName, newSetitem, newSetPrice);
 
-      newCartItem.classList.add("cart-item");
-      newCartItem.append(newSetName, newSetitem, newSetPrice);
+        newSetName.classList.add("set-name");
+        newSetName.append(productNameElement);
 
-      newSetName.classList.add("set-name");
-      newSetName.append(productNameElement);
+        newSetitem.classList.add("set-item");
+        newSetitem.append(iconCaretDown, qualityIconElement, iconCaretUp);
 
-      newSetitem.classList.add("set-item");
-      newSetitem.append(iconCaretDown, qualityIconElement, iconCaretUp);
+        iconCaretDown.classList.add("fa-solid", "fa-square-caret-down");
+        iconCaretDown.addEventListener("click", () => {
+          // console.log("down new");
+          const new_product_index = product_list.findIndex(
+            (p) => p.product_id === productId
+          );
+          product_list[new_product_index].product_id
+            ? product_list[new_product_index].product_id
+            : 0;
+          const p_id = product_list[new_product_index].product_id;
+          const p_id_bill =
+            product_list_bill[new_product_index].product_id + "_bill";
 
-      iconCaretDown.classList.add("fa-solid", "fa-square-caret-down");
-      iconCaretDown.addEventListener("click", () => {
-        // console.log("down new");
-        const new_product_index = product_list.findIndex(
-          (p) => p.product_id === productId
+          const span_quantity = document.getElementById(p_id);
+          const td_quantity = document.getElementById(p_id_bill);
+
+          let count = product_list[new_product_index].quantity - 1;
+          let countBill = product_list_bill[new_product_index].quantity - 1;
+
+          if (count <= 0) {
+            cartWarp.removeChild(newCartItem);
+            tbody.removeChild(newCartItemTr);
+            product_list.splice(new_product_index, 1);
+            product_list_bill.splice(new_product_index, 1);
+          }
+
+          product_list[new_product_index] = {
+            ...product_list[new_product_index],
+            quantity: count,
+          };
+          product_list_bill[new_product_index] = {
+            ...product_list_bill[new_product_index],
+            quantity: countBill,
+          };
+
+          span_quantity.innerHTML = product_list[new_product_index].quantity;
+          product_list_bill[new_product_index].quantity
+            ? product_list_bill[new_product_index].quantity
+            : 0;
+          td_quantity.innerText = product_list_bill[new_product_index].quantity;
+          if (product_list[new_product_index].quantity == 0) {
+            product_list.splice(new_product_index, 1);
+          }
+          // giam gio hang
+          // console.log(product_list);
+          const total_money = product_list.reduce(
+            (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
+            0
+          );
+          // console.log(total_money);
+          document.getElementById(
+            "cart-payment-total"
+          ).innerHTML = `${total_money} $`;
+          document.getElementById(
+            "cart-payment-total2"
+          ).innerText = `${calculateVoucher(Voucher, total_money)}`;
+          document.getElementById(
+            "cart-payment-total3"
+          ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
+        });
+
+        iconCaretUp.classList.add("fa-solid", "fa-square-caret-up");
+        iconCaretUp.addEventListener("click", () => {
+          const new_product_index = product_list.findIndex(
+            (p) => p.product_id === productId
+          );
+          const p_id = product_list[new_product_index].product_id;
+          const p_id_bill =
+            product_list_bill[new_product_index].product_id + "_bill";
+
+          const span_quantity = document.getElementById(p_id);
+          const td_quantity = document.getElementById(p_id_bill);
+
+          let count = product_list[new_product_index].quantity + 1;
+          let countBill = product_list_bill[new_product_index].quantity + 1;
+
+          product_list[new_product_index] = {
+            ...product_list[new_product_index],
+            quantity: count,
+          };
+          product_list_bill[new_product_index] = {
+            ...product_list_bill[new_product_index],
+            quantity: countBill,
+          };
+
+          span_quantity.innerHTML = product_list[new_product_index].quantity;
+          td_quantity.innerHTML = product_list_bill[new_product_index].quantity;
+
+          //tinh tong trong gio hang
+
+          const total_money = product_list.reduce(
+            (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
+            0
+          );
+          // console.log(total_money);
+          document.getElementById(
+            "cart-payment-total"
+          ).innerHTML = `${total_money} $`;
+          document.getElementById(
+            "cart-payment-total2"
+          ).innerText = `${calculateVoucher(Voucher, total_money)}`;
+          document.getElementById(
+            "cart-payment-total3"
+          ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
+        });
+
+        //==========Bang trong model thanh toan==========
+
+        //Query table
+        const tbody = document.querySelector("tbody");
+
+        //tao hang
+        const newCartItemTr = document.createElement("tr");
+        tbody.append(newCartItemTr);
+
+        //tao cot ten
+        const productNameTd = document.createElement("td");
+        newCartItemTr.append(productNameTd);
+        productNameTd.textContent = productName;
+
+        //tao cot Quantity
+        const productQuantity = document.createElement("td");
+
+        newCartItemTr.append(productQuantity);
+        // productQuantity.textContent = "1";
+        productQuantity.setAttribute("id", `${productId}_bill`);
+        productQuantity.innerText = quantity;
+
+        //tao cot Price
+        const productPriceTd = document.createElement("td");
+        newCartItemTr.append(productPriceTd);
+        productPriceTd.textContent = productPrice;
+
+        //tao cot Total
+        const productTotal = document.createElement("td");
+        productTotal.setAttribute("id", `Total_${productId}_bill`);
+        newCartItemTr.append(productTotal);
+        productTotal.innerText = productPrice;
+
+        //========================= Sot rac=========================
+        newSetPrice.classList.add("set-price");
+        newSetPrice.append(productPriceElement, productTrashElement);
+        productTrashElement.classList.add(
+          "fa-regular",
+          "fa-trash-can",
+          "icon-trash"
         );
-        product_list[new_product_index].product_id
-          ? product_list[new_product_index].product_id
-          : 0;
-        const p_id = product_list[new_product_index].product_id;
-        const p_id_bill =
-          product_list_bill[new_product_index].product_id + "_bill";
 
-        const span_quantity = document.getElementById(p_id);
-        const td_quantity = document.getElementById(p_id_bill);
+        // sot rac new
+        productTrashElement.addEventListener("click", () => {
+          const new_product_index = product_list.findIndex(
+            (p) => p.product_id === productId
+          );
+          // console.log("sot rac new");
 
-        let count = product_list[new_product_index].quantity - 1;
-        let countBill = product_list_bill[new_product_index].quantity - 1;
-
-        if (count <= 0) {
           cartWarp.removeChild(newCartItem);
           tbody.removeChild(newCartItemTr);
+
           product_list.splice(new_product_index, 1);
           product_list_bill.splice(new_product_index, 1);
-        }
 
-        product_list[new_product_index] = {
-          ...product_list[new_product_index],
-          quantity: count,
-        };
-        product_list_bill[new_product_index] = {
-          ...product_list_bill[new_product_index],
+          const total_money = product_list.reduce(
+            (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
+            0
+          );
+          // console.log(total_money);
+          document.getElementById(
+            "cart-payment-total"
+          ).innerHTML = `${total_money} $`;
+          document.getElementById(
+            "cart-payment-total2"
+          ).innerText = `${calculateVoucher(Voucher, total_money)}`;
+          document.getElementById(
+            "cart-payment-total3"
+          ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
+        });
+      } else {
+        let productQuality = document.getElementById(
+          `${product_list[index].product_id}`
+        );
+        let count = product_list[index].quantity + 1;
+
+        product_list[index] = { ...product_list[index], quantity: count };
+        productQuality.innerHTML = count;
+
+        //========== Thay doi gia tri quantity trong model===========
+        let productQualityBill = document.getElementById(
+          `${product_list_bill[index_bill].product_id}_bill`
+        );
+
+        let countBill = product_list_bill[index_bill].quantity + 1;
+        product_list_bill[index_bill] = {
+          ...product_list_bill[index_bill],
           quantity: countBill,
         };
+        productQualityBill.innerText = countBill;
 
-        span_quantity.innerHTML = product_list[new_product_index].quantity;
-        product_list_bill[new_product_index].quantity
-          ? product_list_bill[new_product_index].quantity
-          : 0;
-        td_quantity.innerText = product_list_bill[new_product_index].quantity;
-        if (product_list[new_product_index].quantity == 0) {
-          product_list.splice(new_product_index, 1);
-        }
-        // giam gio hang
-        // console.log(product_list);
-        const total_money = product_list.reduce(
-          (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
-          0
+        let productTotalBill = document.getElementById(
+          `Total_${product_list_bill[index_bill].product_id}_bill`
         );
-        // console.log(total_money);
-        document.getElementById(
-          "cart-payment-total"
-        ).innerHTML = `${total_money} $`;
-        document.getElementById(
-          "cart-payment-total2"
-        ).innerText = `${calculateVoucher(Voucher, total_money)}`;
-        document.getElementById("cart-payment-total3").innerText = `${
-          calculateVoucher(Voucher, total_money)
-        } $`;
-      });
 
-      iconCaretUp.classList.add("fa-solid", "fa-square-caret-up");
-      iconCaretUp.addEventListener("click", () => {
-        const new_product_index = product_list.findIndex(
-          (p) => p.product_id === productId
-        );
-        const p_id = product_list[new_product_index].product_id;
-        const p_id_bill =
-          product_list_bill[new_product_index].product_id + "_bill";
-
-        const span_quantity = document.getElementById(p_id);
-        const td_quantity = document.getElementById(p_id_bill);
-
-        let count = product_list[new_product_index].quantity + 1;
-        let countBill = product_list_bill[new_product_index].quantity + 1;
-
-        product_list[new_product_index] = {
-          ...product_list[new_product_index],
-          quantity: count,
-        };
-        product_list_bill[new_product_index] = {
-          ...product_list_bill[new_product_index],
-          quantity: countBill,
-        };
-
-        span_quantity.innerHTML = product_list[new_product_index].quantity;
-        td_quantity.innerHTML = product_list_bill[new_product_index].quantity;
-
-        //tinh tong trong gio hang
-
-        const total_money = product_list.reduce(
-          (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
-          0
-        );
-        // console.log(total_money);
-        document.getElementById(
-          "cart-payment-total"
-        ).innerHTML = `${total_money} $`;
-        document.getElementById(
-          "cart-payment-total2"
-        ).innerText = `${calculateVoucher(Voucher, total_money)}`;
-        document.getElementById(
-          "cart-payment-total3"
-        ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
-      });
-
-      //==========Bang trong model thanh toan==========
-
-      //Query table
-      const tbody = document.querySelector("tbody");
-
-      //tao hang
-      const newCartItemTr = document.createElement("tr");
-      tbody.append(newCartItemTr);
-
-      //tao cot ten
-      const productNameTd = document.createElement("td");
-      newCartItemTr.append(productNameTd);
-      productNameTd.textContent = productName;
-
-      //tao cot Quantity
-      const productQuantity = document.createElement("td");
-
-      newCartItemTr.append(productQuantity);
-      // productQuantity.textContent = "1";
-      productQuantity.setAttribute("id", `${productId}_bill`);
-      productQuantity.innerText = quantity;
-
-      //tao cot Price
-      const productPriceTd = document.createElement("td");
-      newCartItemTr.append(productPriceTd);
-      productPriceTd.textContent = productPrice;
-
-      //tao cot Total
-      const productTotal = document.createElement("td");
-      productTotal.setAttribute("id", `Total_${productId}_bill`);
-      newCartItemTr.append(productTotal);
-      productTotal.innerText = productPrice;
-
-      //========================= Sot rac=========================
-      newSetPrice.classList.add("set-price");
-      newSetPrice.append(productPriceElement, productTrashElement);
-      productTrashElement.classList.add(
-        "fa-regular",
-        "fa-trash-can",
-        "icon-trash"
+        let retailPrice =
+          parseInt(product_list_bill[index_bill].retail_price) *
+          parseInt(countBill);
+        productTotalBill.innerText = `${retailPrice} $`;
+      }
+      const total_money = product_list.reduce(
+        (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
+        0
       );
-
-      // sot rac new
-      productTrashElement.addEventListener("click", () => {
-        const new_product_index = product_list.findIndex(
-          (p) => p.product_id === productId
-        );
-        // console.log("sot rac new");
-
-        cartWarp.removeChild(newCartItem);
-        tbody.removeChild(newCartItemTr);
-
-        product_list.splice(new_product_index, 1);
-        product_list_bill.splice(new_product_index, 1);
-
-        const total_money = product_list.reduce(
-          (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
-          0
-        );
-        // console.log(total_money);
-        document.getElementById(
-          "cart-payment-total"
-        ).innerHTML = `${total_money} $`;
-        document.getElementById(
-          "cart-payment-total2"
-        ).innerText = `${calculateVoucher(Voucher, total_money)}`;
-        document.getElementById(
-          "cart-payment-total3"
-        ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
-      });
-    } else {
-      let productQuality = document.getElementById(
-        `${product_list[index].product_id}`
-      );
-      let count = product_list[index].quantity + 1;
-
-      product_list[index] = { ...product_list[index], quantity: count };
-      productQuality.innerHTML = count;
-
-      //========== Thay doi gia tri quantity trong model===========
-      let productQualityBill = document.getElementById(
-        `${product_list_bill[index_bill].product_id}_bill`
-      );
-
-      let countBill = product_list_bill[index_bill].quantity + 1;
-      product_list_bill[index_bill] = {
-        ...product_list_bill[index_bill],
-        quantity: countBill,
-      };
-      productQualityBill.innerText = countBill;
-
-      let productTotalBill = document.getElementById(
-        `Total_${product_list_bill[index_bill].product_id}_bill`
-      );
-
-      let retailPrice =
-        parseInt(product_list_bill[index_bill].retail_price) *
-        parseInt(countBill);
-      productTotalBill.innerText = `${retailPrice} $`;
-    }
-    const total_money = product_list.reduce(
-      (sum, p) => sum + parseInt(p.quantity) * parseInt(p.retail_price),
-      0
-    );
-    // console.log(total_money);
-    document.getElementById(
-      "cart-payment-total"
-    ).innerHTML = `${total_money} $`;
-    document.getElementById(
-      "cart-payment-total2"
-    ).innerText = `${calculateVoucher(Voucher, total_money)}`;
-    document.getElementById(
-      "cart-payment-total3"
-    ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
-  });
+      // console.log(total_money);
+      document.getElementById(
+        "cart-payment-total"
+      ).innerHTML = `${total_money} $`;
+      document.getElementById(
+        "cart-payment-total2"
+      ).innerText = `${calculateVoucher(Voucher, total_money)}`;
+      document.getElementById(
+        "cart-payment-total3"
+      ).innerText = `${calculateVoucher(Voucher, total_money)} $`;
+    });
+  }
 }
+clickProduct();
 
 function calculateTotalRetailPrice(products) {
   let totalRetailPrice = 0;
@@ -351,7 +351,6 @@ function calculateTotalRetailPrice(products) {
   }
   return totalRetailPrice;
 }
-
 function calculateVoucher(voucher, price) {
   price = price - voucher;
   if (price <= 0) {
@@ -360,21 +359,25 @@ function calculateVoucher(voucher, price) {
   return price;
 }
 function checkVoucher(voucher) {
-  const money = parseInt(document.getElementById("cart-payment-total2").textContent);
+  const money = parseInt(
+    document.getElementById("cart-payment-total2").textContent
+  );
   if (money != 0) {
     // console.log(money)
-    return document.getElementById(
+    return (document.getElementById(
       "cart-payment-total2"
-    ).innerText = `${calculateVoucher(voucher, money)} $`
+    ).innerText = `${calculateVoucher(voucher, money)} $`);
   }
 }
 function checkVoucherTotal3(voucher) {
-  const money = parseInt(document.getElementById("cart-payment-total3").textContent);
+  const money = parseInt(
+    document.getElementById("cart-payment-total3").textContent
+  );
   if (money != 0) {
     // console.log(money)
-    return document.getElementById(
+    return (document.getElementById(
       "cart-payment-total3"
-    ).innerText = `${calculateVoucher(voucher, money)} $`
+    ).innerText = `${calculateVoucher(voucher, money)} $`);
   }
 }
 
@@ -474,87 +477,87 @@ async function searchCustomer(event) {
 }
 
 //=========search product ==============
-const div1 = document.querySelector(".list-FindCustomer");
-const myDiv1 = document.querySelector(".cart-warp");
-const ID1 = document.querySelector(".cart");
-const formFindCustomer = document.getElementById("form-FindCustomer");
+// const div1 = document.querySelector(".list-FindCustomer");
+// const myDiv1 = document.querySelector(".cart-warp");
+// const ID1 = document.querySelector(".cart");
+// const formFindCustomer = document.getElementById("form-FindCustomer");
 
-async function searchProduct(event) {
-  const customer = document.getElementById("form-FindCustomer").value;
-  if (event.key === "Enter") {
-    div.style.display = "block";
-    try {
-      const axiosInstance = axios.create({
-        baseURL: "http://localhost:4000",
-      });
-      const response = await axiosInstance.post("/search/customer-searching", {
-        text: customer,
-      });
-      let div = document.querySelector(".list-FindCustomer");
-      let ulList = document.querySelector(".list-FindCustomer-select");
-      let liList = document.querySelector(".list-FindCustomer-item");
+// async function searchProduct(event) {
+//   const customer = document.getElementById("form-FindCustomer").value;
+//   if (event.key === "Enter") {
+//     div.style.display = "block";
+//     try {
+//       const axiosInstance = axios.create({
+//         baseURL: "http://localhost:4000",
+//       });
+//       const response = await axiosInstance.post("/search/customer-searching", {
+//         text: customer,
+//       });
+//       let div = document.querySelector(".list-FindCustomer");
+//       let ulList = document.querySelector(".list-FindCustomer-select");
+//       let liList = document.querySelector(".list-FindCustomer-item");
 
-      if (liList) {
-        ulList.remove(liList);
-        let newliList = document.createElement("ul");
-        newliList.classList.add("list-FindCustomer-select");
-        div.appendChild(newliList);
-      }
-      if (response.data.length == 0) {
-        let newUlList = document.querySelector(".list-FindCustomer-select");
-        let liList = document.createElement("li");
-        liList.classList.add("list-FindCustomer-item");
-        newUlList.append(liList);
-        liList.textContent = "Not found";
-        return;
-      }
-      customer_list = [...response.data];
+//       if (liList) {
+//         ulList.remove(liList);
+//         let newliList = document.createElement("ul");
+//         newliList.classList.add("list-FindCustomer-select");
+//         div.appendChild(newliList);
+//       }
+//       if (response.data.length == 0) {
+//         let newUlList = document.querySelector(".list-FindCustomer-select");
+//         let liList = document.createElement("li");
+//         liList.classList.add("list-FindCustomer-item");
+//         newUlList.append(liList);
+//         liList.textContent = "Not found";
+//         return;
+//       }
+//       customer_list = [...response.data];
 
-      customer_list.forEach((item) => {
-        let newUlList = document.querySelector(".list-FindCustomer-select");
-        let liList = document.createElement("li");
+//       customer_list.forEach((item) => {
+//         let newUlList = document.querySelector(".list-FindCustomer-select");
+//         let liList = document.createElement("li");
 
-        liList.classList.add("list-FindCustomer-item");
-        liList.setAttribute("id", `${item._id}`);
-        newUlList.append(liList);
-        //show customer list
-        liList.textContent = `Name: ${item.full_name} , Phone: ${item.phone_number}`;
-      });
-      customer_list = [];
+//         liList.classList.add("list-FindCustomer-item");
+//         liList.setAttribute("id", `${item._id}`);
+//         newUlList.append(liList);
+//         //show customer list
+//         liList.textContent = `Name: ${item.full_name} , Phone: ${item.phone_number}`;
+//       });
+//       customer_list = [];
 
-      const div1 = document.querySelector(".list-FindCustomer");
-      const formInputForcus = document.getElementById("form-FindCustomer");
+//       const div1 = document.querySelector(".list-FindCustomer");
+//       const formInputForcus = document.getElementById("form-FindCustomer");
 
-      const listItems = document.querySelectorAll(
-        ".list-FindCustomer-select .list-FindCustomer-item"
-      );
+//       const listItems = document.querySelectorAll(
+//         ".list-FindCustomer-select .list-FindCustomer-item"
+//       );
 
-      const customerName = document.querySelector("#customer_name");
+//       const customerName = document.querySelector("#customer_name");
 
-      listItems.forEach((item) => {
-        item.addEventListener("click", function () {
-          console.log(item);
-          formInputForcus.value = item.innerText;
-          idCustomer.push(item.id);
-          ///=================gan id customer========
-          customerName.innerHTML = `<small>Customer: ${item.innerText}</small>`;
-          div1.style.display = "none";
-          customerExists = true;
-        });
+//       listItems.forEach((item) => {
+//         item.addEventListener("click", function () {
+//           console.log(item);
+//           formInputForcus.value = item.innerText;
+//           idCustomer.push(item.id);
+//           ///=================gan id customer========
+//           customerName.innerHTML = `<small>Customer: ${item.innerText}</small>`;
+//           div1.style.display = "none";
+//           customerExists = true;
+//         });
 
-        item.addEventListener("blur", function () {
-          div1.style.display = "none";
-        });
-      });
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: `${error}`,
-      });
-    }
-  }
-}
+//         item.addEventListener("blur", function () {
+//           div1.style.display = "none";
+//         });
+//       });
+//     } catch (error) {
+//       Swal.fire({
+//         icon: "error",
+//         title: "Oops...",
+//         text: `${error}`,
+//       });
+//     }
+//   }
+// }
 
 //=======payment======
 const addPament = document.getElementById("payMent");

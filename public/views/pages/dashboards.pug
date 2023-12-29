@@ -23,27 +23,27 @@ block append container
     .chart-list-product 
       table.table-list-product.table
         tr
-          th Code
-          th Total
-          th Customer
-          th Methods
-          th Discount 
-          th Cash
-          th Due
-          th Created_at
-          th Created_by
+          th Code 
+          th Total 
+          th Customer 
+          th Methods 
+          th Discount  
+          th Cash 
+          th Due 
+          th Created_at 
+          th Created_by 
         each data in Data ? Data : []
           each d in data ? data : []
             tr#data 
               td 
                 a(href="#" id="show-modal") #{d.invoice_code}
                   p#product_id #{d._id}
-              td #{d.subtotal}$
+              td #{d.subtotal} $
               td #{d.customer.full_name} 
-              td #{d.payment_method }
-              td #{d.discount}$
-              td #{d.payment_method == 'Paypal' ? '-' : `${d.money_given}$`}
-              td #{d.payment_method == 'Paypal' ? '-' : `${d.money_back}$`}
+              td #{d.payment_method}
+              td #{d.discount} $
+              td #{d.payment_method == 'Paypal' ? '-' : `${d.money_given} $`}
+              td #{d.payment_method == 'Paypal' ? '-' : `${d.money_back} $`}
               td #{d.created_at.split('T')[0]}
               td 
                 a(href=`contacts/staffs/${d.created_by._id}`)

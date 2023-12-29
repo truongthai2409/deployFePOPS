@@ -49,7 +49,7 @@ form.addEventListener("submit", async (e) => {
     axiosInstance
       .post("/customers/add-customer", data)
       .then(function (response) {
-        console.log(response)
+        console.log(response);
 
         customerExists = true;
         idCustomer.push(response.data._id);
@@ -57,7 +57,7 @@ form.addEventListener("submit", async (e) => {
         const newCustomer = document.getElementById("form-FindCustomer");
         const customerName = document.querySelector("#customer_name");
 
-        newCustomer.value = `Name: ${response.data.full_name}, Phone: ${response.data.phone_number}`
+        newCustomer.value = `Name: ${response.data.full_name}, Phone: ${response.data.phone_number}`;
         customerName.innerHTML = `<small>Customer: ${response.data.full_name}</small>`;
 
         Swal.fire({
@@ -70,7 +70,6 @@ form.addEventListener("submit", async (e) => {
         setTimeout(() => {
           performAnimationAndHide();
         }, 1600);
-
       });
   } catch (error) {
     console.log(error);
@@ -86,74 +85,91 @@ form.addEventListener("submit", async (e) => {
 //=============== search product ==================
 
 async function searchProduct(event) {
-  if (event.key === "Enter") {
-    const product = document.getElementById("form-SearchProduct").value;
-    const listCard = document.querySelector(".list-card");
-    const showProduct = document.querySelector(".show-product");
-
-    const ul = document.createElement("ul");
-    ul.classList.add("list-card");
-    showProduct.appendChild(ul);
-    // console.log(listCard)
-    listCard.remove();
-    // console.log(product);
-    const data = {
-      text: product,
-    };
-    try {
-      const axiosInstance = await axios.create({
-        baseURL: "http://localhost:4000",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      axiosInstance
-        .post("/search/product-searching", data)
-        .then(function (response) {
-          console.log(response.data);
-          response.data.forEach((item) => {
-            // console.log(item._id)
-            const li = document.createElement("li");
-            const a = document.createElement("a");
-            const p = document.createElement("p");
-            const img = document.createElement("img");
-            const h4 = document.createElement("h4");
-            const strong = document.createElement("strong");
-            const br = document.createElement("br");
-            const span = document.createElement("span");
-
-            li.classList.add("list-card-item");
-
-            a.classList.add(`${item._id}`);
-            a.id = "add_product";
-
-            p.innerHTML = item._id;
-            p.id = "product_id";
-
-            img.src = item.image_urls[0];
-
-            h4.id = "product_name";
-            h4.innerHTML = item.product_name;
-
-            strong.id = "retail_price";
-            strong.innerHTML = item.retail_price;
-
-            span.id = item.quantity.toLocaleString();
-            span.innerHTML = `${item.quantity}available`;
-
-            a.append(p, img, h4, strong, br, span);
-            li.append(a);
-            ul.append(li);
-          });
-        });
-    } catch (error) {
-      console.log(error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Something went wrong!",
-        footer: '<a href="#">Why do I have this issue?</a>',
-      });
-    }
+  const product = document.getElementById("form-SearchProduct").value;
+  const listCard = document.querySelector(".list-card");
+  const listNews = document.querySelector(".list-new");
+  const showProduct = document.querySelector(".show-product");
+  console.log(product);
+  if (product === '' && listNews){
+    console.log("null")
+    listNews.remove();
+    listCard.style.display = 'grid';
   }
+    if (event.key === "Enter") {
+      const data = {
+        text: product,
+      };
+      try {
+        const axiosInstance = await axios.create({
+          baseURL: "http://localhost:4000",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        axiosInstance
+          .post("/search/product-searching", data)
+          .then(function (response) {
+            console.log(response);
+            const values = Object.values(response.data);
+            console.log(values.length);
+            if (values.length == 0) {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Product Not Found !",
+              });
+            } else {
+              if (listNews) {
+                listNews.remove();
+              }
+              const ul = document.createElement("ul");
+              ul.classList.add("list-new");
+              showProduct.appendChild(ul);
+              listCard.style.display = "none";
+              response.data.forEach((item) => {
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+                const p = document.createElement("p");
+                const img = document.createElement("img");
+                const h4 = document.createElement("h4");
+                const strong = document.createElement("strong");
+                const br = document.createElement("br");
+                const span = document.createElement("span");
+
+                li.classList.add("list-card-item");
+
+                a.classList.add(`${item._id}`);
+                a.id = "add_product";
+
+                p.innerHTML = item._id;
+                p.id = "product_id";
+
+                img.src = item.image_urls[0];
+
+                h4.id = "product_name";
+                h4.innerHTML = item.product_name;
+
+                strong.id = "retail_price";
+                strong.innerHTML = item.retail_price;
+
+                span.id = item.quantity.toLocaleString();
+                span.innerHTML = `${item.quantity}available`;
+
+                a.append(p, img, h4, strong, br, span);
+                li.append(a);
+                ul.append(li);
+              });
+              clickProduct();
+            }
+          });
+      } catch (error) {
+        console.log(error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong!",
+          footer: '<a href="#">Why do I have this issue?</a>',
+        });
+      }
+    }
 }

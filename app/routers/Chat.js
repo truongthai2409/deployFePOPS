@@ -4,12 +4,17 @@ const router = express.Router();
 const formatTime = require("date-format");
 const chatRouter = require("../controllers/ChatController");
 
+const settingRouter = require('../controllers/SettingController');
+
+// router.get('/setting', settingRouter.index);
+
 router.get(
-  "/chat/:user_id",
+  "/chat",
   async (req, res, next) => {
-    const { accessToken } = req;
-    const { user_id } = req.params;
-    console.log(user_id);
+    const accessToken  = req.data;
+    console.log(accessToken)
+    let user_id = req.query.idChat;
+    console.log(user_id)
     const axiosInstance = axios.create({
       baseURL: "http://localhost:4000",
       headers: {
@@ -53,5 +58,6 @@ router.get(
   },
   chatRouter.index
 );
+
 
 module.exports = router;

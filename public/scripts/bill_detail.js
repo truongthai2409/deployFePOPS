@@ -98,24 +98,19 @@ async function callQR() {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      // console.log({
-      //   customer_id,
-      //   product_list: cart_product,
-      //   voucher: Voucher ? Voucher : "",
-      // });
       const response = await axiosInstance.post("/payments/pay-by-paypal", {
         customer_id: idCustomer[0],
         product_list: cart_product,
-        voucher: Voucher ? Voucher : "",
+        voucher: voucher_code ? voucher_code : "",
       });
       //
       qR.src = response.data.qr_code;
       aQR.href = response.data.paypal;
-      aQR.addEventListener("click", () => {
-        setTimeout(() => {
-          window.location.reload()
-        }, 3000)
-      })
+      // aQR.addEventListener("click", () => {
+      //   setTimeout(() => {
+      //     window.location.reload()
+      //   }, 3000)
+      // })
     } catch (error) {
       console.log(error);
       Swal.fire({
